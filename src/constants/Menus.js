@@ -1,3 +1,3 @@
-const Menus = ['sortable', 'modal', 'fadeOut' ];
+const Menus = ['sortable', 'modal', 'fadeOut'];
 export default Menus;
 
