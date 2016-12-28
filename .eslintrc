@@ -1,0 +1,15 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "globals": {
+    "alert": true,
+    "document": true
+  },
+  "rules": {
+    // Overlide rules of airbnb
+    'no-multi-spaces': 0,
+    'no-console': 0,
+    'no-alert': 0,
+    'react/prefer-stateless-function': 0
+  }
+}
