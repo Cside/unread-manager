@@ -9,49 +9,112 @@ use LWP::Simple qw();
 use Data::Dumper::Concise;
 use Data::Validator;
 use Sub::Install;
+use Config::Pit;
+use JSON;
+use WebService::Hatena::Bookmark::Lite;
+use URI::Escape;
 
 __PACKAGE__->load_plugins(qw/Web::JSON/);
 
-Sub::Install::install_sub({
-    into => 'Amon2::Web',
-    as   => 'render_error_json',
-    code => sub {
-        my ($self, $code, $data) = @_;
-        my $res = $self->render_json($data);
-        $res->status($code);
-        return $res;
-    },
-});
-Sub::Install::install_sub({
-    into => 'Amon2::Web',
-    as   => 'validate',
-    code => sub {
-        my ($self, $rule, $params) = @_;
-        my $validator = Data::Validator->new(%$rule)->with('NoThrow');;
-        $validator->validate(%$params);
+BEGIN {
+    Sub::Install::install_sub({
+        into => 'Amon2::Web',
+        as   => 'render_error_json',
+        code => sub {
+            my ($self, $code, $data) = @_;
+            my $res = $self->render_json($data);
+            $res->status($code);
+            return $res;
+        },
+    });
 
-        my @errors;
-        if ($validator->has_errors) {
-            my $errors = $validator->clear_errors;
-            push @errors, sprintf("[$_->{name}] $_->{message}") for @$errors;
-        }
-        my $error_res = $self->render_error_json(400, { errors => \@errors }) if @errors;
+    Sub::Install::install_sub({
+        into => __PACKAGE__,
+        as   => 'put',
+        code => sub {
+            router->connect($_[0], {code => $_[1], method => ['PUT']}, {'PUT'});
+        },
+    });
+    Sub::Install::install_sub({
+        into => __PACKAGE__,
+        as   => 'del',
+        code => sub {
+            router->connect($_[0], {code => $_[1], method => ['DELETE']}, {'DELETE'});
+        },
+    });
 
-        return $params, $error_res;
-    },
-});
+    Sub::Install::install_sub({
+        into => 'Amon2::Web',
+        as   => 'validate',
+        code => sub {
+            my ($self, $rule) = @_;
+            my $validator = Data::Validator->new(%$rule)->with('NoThrow');;
+            my $params = $self->req->parameters;
+
+            $validator->validate(%$params);
+
+            my @errors;
+            if ($validator->has_errors) {
+                my $errors = $validator->clear_errors;
+                push @errors, $_->{message} for @$errors;
+            }
+            my $error_res = $self->render_error_json(400, { errors => \@errors }) if @errors;
+
+            return $params, $error_res;
+        },
+    });
+};
 
 sub p ($) { warn Dumper shift }
 
-get '/' => sub {
+sub url_for_edit { 'http://b.hatena.ne.jp/atom/edit?url=' . uri_escape(shift) }
+
+state $CLIENT = do {
+    my $config = pit_get('unread_manager', require => {
+        'username' => 'your username on example',
+        'password' => 'your password on example',
+    });
+    WebService::Hatena::Bookmark::Lite->new(
+        username => $config->{username},
+        password => $config->{password},
+    );
+};
+
+put '/bookmark' => sub {
     my ($c) = @_;
 
     my ($args, $error_res) = $c->validate({
-        foo => 'Str',
-    }, $c->req->parameters);
+        url     => 'Str',
+        tags    => 'ArrayRef[Str]',
+        comment => { isa => 'Str', optional => 1 },
+    });
     return $error_res if $error_res;
 
-    return $c->render_json({ hello => 'world' });
+    # TODO
+    $CLIENT->edit(
+        edit_ep  => url_for_edit($args->{url}),
+        tag      => $args->{tags},
+        $args->{comment} ? (comment  => $args->{comment}) : (),
+    );
+
+    return $c->render_json({ ok => JSON::true });
+};
+
+del '/bookmark' => sub {
+    my ($c) = @_;
+
+    my ($args, $error_res) = $c->validate({
+        urls => 'ArrayRef[Str]',
+    });
+    return $error_res if $error_res;
+
+    for my $url (@{$args->{urls}}) {
+        $CLIENT->delete(
+            edit_ep  => url_for_edit($url),
+        );
+    }
+
+    return $c->render_json({ ok => JSON::true });
 };
 
 builder {
