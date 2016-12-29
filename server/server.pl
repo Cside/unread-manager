@@ -28,20 +28,19 @@ BEGIN {
         },
     });
 
-    Sub::Install::install_sub({
-        into => __PACKAGE__,
-        as   => 'put',
-        code => sub {
-            router->connect($_[0], {code => $_[1], method => ['PUT']}, {'PUT'});
-        },
-    });
-    Sub::Install::install_sub({
-        into => __PACKAGE__,
-        as   => 'del',
-        code => sub {
-            router->connect($_[0], {code => $_[1], method => ['DELETE']}, {'DELETE'});
-        },
-    });
+    for my $pair (
+        ['put',     'PUT'],
+        ['del',     'DELETE'],
+        ['options', 'OPTIONS'],
+    ) {
+        Sub::Install::install_sub({
+            into => __PACKAGE__,
+            as   => $pair->[0],
+            code => sub {
+                router->connect($_[0], {code => $_[1], method => [$pair->[1]]}, {method => $pair->[1]});
+            },
+        });
+    }
 
     Sub::Install::install_sub({
         into => 'Amon2::Web',
@@ -100,6 +99,11 @@ put '/bookmark' => sub {
     return $c->render_json({ ok => JSON::true });
 };
 
+get '/', sub  {
+    my ($c) = @_;
+    return $c->render_json({ ok => JSON::true });
+};
+
 del '/bookmark' => sub {
     my ($c) = @_;
 
@@ -117,7 +121,27 @@ del '/bookmark' => sub {
     return $c->render_json({ ok => JSON::true });
 };
 
+options '/bookmark', sub {
+    my ($c) = @_;
+    return $c->render_json({ ok => JSON::true });
+};
+
 builder {
+    ## TODO: if dev
+    enable sub {
+        my $app = shift;
+        sub {
+            my $res = $app->($_[0]);
+
+            my $header = Plack::Util::headers($res->[1]);
+
+            $header->set('Access-Control-Allow-Origin' => '*');
+            $header->set('Access-Control-Allow-Methods' => join(', ', qw( POST GET PUT DELETE HEAD OPTIONS )));
+            $header->set('Access-Control-Allow-Headers' => join(', ', qw( Content-Type X-Requested-With )));
+
+            return $res;
+        };
+    };
     enable "DebugRequestParams";
     __PACKAGE__->to_app();
 };
