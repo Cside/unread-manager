@@ -1,25 +1,33 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
+import * as Actions from '../actions';
+import SearchBox from '../components/SearchBox';
+import Tabs      from '../components/Tabs';
+import Entry     from '../components/Entry';
 
 class App extends React.Component {
-  static propTypes() {
-    return { children: React.PropTypes.node };
-  }
+  static propTypes = {};
 
   render() {
-    const { children } = this.props;
     return (
       <div>
-        {children}
+        <SearchBox />
+        <Tabs />
+        { [1, 2, 3].map(n => (<Entry key={n} />)) }
       </div>
     );
   }
 }
 
-// const mapStateToProps = (state, ownProps) => ({
-//   errorMessage: state.errorMessage,
-//   inputValue: ownProps.location.pathname.substring(1)
-// })
+const mapStateToProps = (state) => {
+  return { foo: state }; // TODO
+};
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(Actions, dispatch),
+});
 
-export default connect()(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);
