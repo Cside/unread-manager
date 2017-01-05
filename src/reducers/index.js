@@ -1,4 +1,8 @@
 import { combineReducers } from 'redux';
-import menus from './menus';
+import allEntries from './allEntries';
+import visibleEntries from './visibleEntries';
 
-export default combineReducers({ menus });
+export default combineReducers({
+  allEntries,
+  visibleEntries,
+});

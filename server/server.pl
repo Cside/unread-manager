@@ -15,6 +15,7 @@ use WebService::Hatena::Bookmark::Lite;
 use URI::Escape;
 
 __PACKAGE__->load_plugins(qw/Web::JSON/);
+__PACKAGE__->load_plugins(qw/Web::Text/);
 
 BEGIN {
     Sub::Install::install_sub({
@@ -99,9 +100,9 @@ put '/bookmark' => sub {
     return $c->render_json({ ok => JSON::true });
 };
 
-get '/', sub  {
+get '/bookmarks/search_index', sub  {
     my ($c) = @_;
-    return $c->render_json({ ok => JSON::true });
+    return $c->render_text(LWP::Simple::get('http://b.hatena.ne.jp/Cside/search.data'));
 };
 
 del '/bookmark' => sub {
