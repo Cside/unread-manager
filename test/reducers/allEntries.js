@@ -23,6 +23,7 @@ http://example.coom/4
 3\t20161225211201`);
     assert.deepEqual(result, [
       {
+        id:        1,
         title:     'title1',
         tags:      [],
         comment:   null,
@@ -33,6 +34,7 @@ http://example.coom/4
         forSearch: 'title1   http://example.coom/1',
       },
       {
+        id:        2,
         title:     'title2',
         tags:      ['tag1'],
         comment:   null,
@@ -43,6 +45,7 @@ http://example.coom/4
         forSearch: 'title2 tag1  http://example.coom/2',
       },
       {
+        id:        3,
         title:     'title3',
         tags:      [],
         comment:   'comment',
@@ -53,6 +56,7 @@ http://example.coom/4
         forSearch: 'title3  comment http://example.coom/3',
       },
       {
+        id:        4,
         title:     'title4',
         tags:      ['tag1', 'tag2'],
         comment:   'comment',

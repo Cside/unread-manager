@@ -1,16 +1,18 @@
 import React from 'react';
 
+const { string, func } = React.PropTypes;
+
 class Tabs extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string.isRequired,
+    name: string.isRequired,
+    onClick: func.isRequired,
   }
 
   render = () => {
-    // const { actions } = this.props;
-    const { name } = this.props;
+    const { name, onClick } = this.props;
 
     return (
-      <div>{name}</div>
+      <button className="btn btn-default" onClick={onClick}>{name}</button>
     );
   }
 }

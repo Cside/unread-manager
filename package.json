@@ -7,7 +7,7 @@
     "build:js": "webpack --progress --colors",
     "watch:js": "webpack --progress --colors --watch",
     "run:server": "webpack-dev-server --history-api-fallback --hot --content-base public --port 3000",
-    "start": "npm-run-all -p watch:js run-server",
+    "start": "npm-run-all -p watch:js run:server",
     "clean": "rm public/*hot-update.json public/*hot-update.js",
     "lint": "eslint src --fix"
   },
@@ -27,6 +27,7 @@
     "redux-thunk": "^2.1.0",
     "underscore": "^1.8.3",
     "urijs": "^1.18.4",
+    "visualwidth": "^0.1.0",
     "webpack": "^1.14.0",
     "webpack-async-await": "^1.1.0"
   },

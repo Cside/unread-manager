@@ -18,11 +18,12 @@ export const parseSearchIndex = (text) => {
   });
 
   const result = [];
+  let id = 0;
   texts.forEach((line, i) => {
     const index = Math.floor(i / 3);
     switch (i % 3) {
       case 0: {
-        result[index] = { title: line.trim() };
+        result[index] = { id: ++id, title: line.trim() };
         break;
       }
       case 1: {
@@ -62,9 +63,11 @@ export const parseSearchIndex = (text) => {
 
 export default function allEntries(state = [], action) {
   switch (action.type) {
-    case 'RECEIVE_SEARCH_INDEX':
+    case 'RECEIVE_SEARCH_INDEX': {
       return parseSearchIndex(action.searchIndex);
-    default:
+    }
+    default: {
       return state;
+    }
   }
 }

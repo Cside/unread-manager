@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
 
-const { func } = React.PropTypes;
+const { string, func } = React.PropTypes;
 
 class SearchBox extends Component {
   static propTypes = {
-    onInput: func.isRequired,
-  }
-
-  onChange = (e) => {
-    const { onInput } = this.props;
-    onInput(e.target.value);
+    search:      func.isRequired,
+    searchQuery: string.isRequired,
   }
 
   render = () => {
+    const { searchQuery, search } = this.props;
     return (
-      <input type="text" onChange={this.onChange} />
+      <input type="text" onChange={(e) => search(e.target.value)} value={searchQuery} />
     );
   }
 }

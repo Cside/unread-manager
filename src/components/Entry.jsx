@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import visualwidth from 'visualwidth';
 
-const { arrayOf, shape, string } = React.PropTypes;
+const { arrayOf, shape, string, number } = React.PropTypes;
 
 class Entry extends Component {
   static propTypes = {
     entry: shape({
+      id:        number.isRequired,
       title:     string.isRequired,
       tags:      arrayOf(string.isRequired).isRequired,
       comment:   string,
@@ -19,19 +21,25 @@ class Entry extends Component {
   render = () => {
     const { entry } = this.props;
 
-    const comment = entry.comment ? (<div>{entry.comment}</div>) : null;
+    const comment = entry.comment ? (<div className="text-muted">{entry.comment}</div>) : null;
 
     return (
-      <div>
-        <div>
-          <img alt="favicon" src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
-          <a href={entry.url} target="_blank" rel="noopener noreferrer">{entry.title}</a>
-        </div>
-        {comment}
-      </div>
+      <tr>
+        <td className="favicon">
+          <img alt="" src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
+        </td>
+        <td>
+          <a href={entry.url} target="_blank" rel="noopener noreferrer">
+            {visualwidth.truncate(entry.title, 80, '...')}
+          </a>
+          {comment}
+        </td>
+        <td>
+          {entry.date}
+        </td>
+      </tr>
     );
   }
 }
 
 export default Entry;
-

@@ -21,6 +21,7 @@
     'no-param-reassign': 0,
     'key-spacing': 0,
     'arrow-parens': 0,
+    'no-plusplus': 0,
     'react/prefer-stateless-function': 0,
     'import/no-dynamic-require': 0
   }

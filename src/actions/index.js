@@ -8,12 +8,13 @@ const receiveSearchIndex = (searchIndex) => {
   };
 };
 
-export const setVisibleEntries = (words) => {
+export const search = (searchQuery) => {
   return (dispatch, getState) => {
     dispatch({
-      type:       'SET_VISIBLE_ENTRIES',
-      allEntries: getState().allEntries,
-      words:      words.split(/\s+/).filter(str => str !== ''),
+      type:          'SEARCH',
+      allEntries:    getState().allEntries,
+      searchQuery,
+      searchQueries: searchQuery.split(/\s+/).filter(str => str !== ''),
     });
   };
 };
@@ -23,10 +24,10 @@ export const fetchSearchIndex = () => {
     Cache.getOrSetForPromise('searchIndex', () => {
       return axios.get('http://localhost:8000/bookmarks/search_index')
         .then(res => res.data);
-    }, 3)
+    }, 60) // FIXME
       .then((data) => {
         dispatch(receiveSearchIndex(data));
-        dispatch(setVisibleEntries(''));
+        dispatch(search(''));
       });
   };
 };

@@ -1,15 +1,17 @@
 import { connect } from 'react-redux';
-import { fetchSearchIndex, setVisibleEntries } from '../actions';
+import { fetchSearchIndex, search } from '../actions';
 import App from '../components/App';
 
 const mapStateToProps = state => {
   return {
     visibleEntries: state.visibleEntries,
+    searchQuery:    state.searchQuery,
   };
 };
+
 const mapDispatchToProps = dispatch => ({
-  onLoad:  () => dispatch(fetchSearchIndex()),
-  onInput: (words) => dispatch(setVisibleEntries(words)),
+  fetchSearchIndex: ()            => dispatch(fetchSearchIndex()),
+  search:           (searchQuery) => dispatch(search(searchQuery)),
 });
 
 export default connect(
