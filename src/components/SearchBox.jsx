@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// import _ from 'underscore';
 
 const { string, func } = React.PropTypes;
 
@@ -8,10 +9,14 @@ class SearchBox extends Component {
     searchQuery: string.isRequired,
   }
 
+  // wait = 0 でもなぜかテキストエリアの値がおかしくなる
+  // onChange = _.debounce((value) => this.props.search(value), 0);
+  onChange = (value) => this.props.search(value)
+
   render = () => {
-    const { searchQuery, search } = this.props;
+    const { searchQuery } = this.props;
     return (
-      <input type="text" onChange={(e) => search(e.target.value)} value={searchQuery} />
+      <input type="text" onChange={(e) => this.onChange(e.target.value)} value={searchQuery} />
     );
   }
 }
