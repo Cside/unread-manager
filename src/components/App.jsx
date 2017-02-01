@@ -6,11 +6,13 @@ import Entry     from '../components/Entry';
 const { arrayOf, shape, string, number, func } = React.PropTypes;
 
 export default class App extends Component {
+  // TODO 初期化時は visibleEntries とかないので isRequired いらないのでは
   static propTypes = {
-    searchQuery:      string.isRequired,
     fetchSearchIndex: func.isRequired,
     search:           func.isRequired,
-    visibleEntries: arrayOf(
+    toggleSticky:     func.isRequired,
+    searchQuery:      string.isRequired,
+    visibleEntries:   arrayOf(
       shape({
         id:        number.isRequired,
         title:     string.isRequired,
@@ -18,20 +20,20 @@ export default class App extends Component {
         comment:   string,
         url:       string.isRequired,
         baseUrl:   string.isRequired,
-        count:     string.isRequired,
+        count:     number.isRequired,
         date:      string.isRequired,
         forSearch: string.isRequired,
       }).isRequired,
     ).isRequired,
   };
 
-  componentDidMount = () => {
+  componentWillMount = () => {
     const { fetchSearchIndex } = this.props;
     fetchSearchIndex();
   }
 
   render = () => {
-    const { searchQuery, search } = this.props;
+    const { searchQuery, search, toggleSticky } = this.props;
 
     return (
       <div>
@@ -51,9 +53,11 @@ export default class App extends Component {
           })
         }
         <table className="table">
-          {this.props.visibleEntries.map(
-            entry => (<Entry key={entry.url} entry={entry} />),
-          )}
+          <tbody>
+            {this.props.visibleEntries.map(
+              entry => (<Entry key={entry.url} entry={entry} toggleSticky={toggleSticky} />),
+            )}
+          </tbody>
         </table>
       </div>
     );

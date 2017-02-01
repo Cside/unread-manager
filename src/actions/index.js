@@ -1,10 +1,38 @@
 import axios from 'axios';
+import clone from 'clone';
 import Cache from '../utils/Cache';
 
-const receiveSearchIndex = (searchIndex) => {
-  return {
-    type: 'RECEIVE_SEARCH_INDEX',
-    searchIndex,
+// TODO HTTP Request 中の Loading アイコン的なもの
+// TODO HTTP Request の Error Handling
+
+const httpClient = axios.create({
+  baseURL: 'http://localhost:7999',
+  headers: { 'Content-Type': 'application/json;charset=utf-8' },
+});
+
+// XXX stickey を toggle する以外にもいろいろやることあるので
+// onClickSticky みたいな抽象的な名前のほうがよさげ
+export const toggleSticky = (state) => {
+  const entry = clone(state);
+  return (dispatch) => {
+    const tags = entry.tags;
+    entry.tags = entry.readThisLater
+           ? tags.filter((tag) => tag !== 'あとで読む')
+           : (() => { tags.unshift('あとで読む'); return tags; })();
+
+    dispatch({
+      type: 'TOGGLE_STICKY',
+      entry,
+    });
+
+    Cache.remove('searchIndex');
+
+    httpClient.put('/bookmark', {
+      url:     entry.url,
+      tags:    entry.tags,
+      comment: entry.comment,
+    })
+    .catch(e => console.error(e));
   };
 };
 
@@ -22,12 +50,18 @@ export const search = (searchQuery) => {
 export const fetchSearchIndex = () => {
   return (dispatch) => {
     Cache.getOrSetForPromise('searchIndex', () => {
-      return axios.get('http://localhost:8000/bookmarks/search_index')
-        .then(res => res.data);
-    }, 60) // FIXME
-      .then((data) => {
-        dispatch(receiveSearchIndex(data));
-        dispatch(search(''));
-      });
+      return httpClient.get('/bookmarks/search_index')
+        .then(res => res.data)
+        .catch(e => console.error(e));
+    }, 60 * 6)
+    .then((searchIndex) => {
+      if (searchIndex) {
+        dispatch({
+          type: 'RECEIVE_SEARCH_INDEX',
+          searchIndex,
+        });
+      }
+      dispatch(search(''));
+    });
   };
 };

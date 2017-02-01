@@ -1,6 +1,6 @@
 export default function visibleEntries(state = [], action) {
   switch (action.type) {
-    case 'SEARCH':
+    case 'SEARCH': {
       if (action.searchQueries.length === 0) {
         return action.allEntries;
       }
@@ -9,7 +9,12 @@ export default function visibleEntries(state = [], action) {
           (searchQuery) => entry.forSearch.indexOf(searchQuery.toLowerCase()) >= 0,
         ),
       );
-    default:
+    }
+    case 'TOGGLE_STICKY': {
       return state;
+    }
+    default: {
+      return state;
+    }
   }
 }

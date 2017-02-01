@@ -1,6 +1,8 @@
 import lscache from 'lscache';
+import _ from 'underscore';
 
 class Cache {
+  // expires = min
   static getOrSetForPromise(key, callback, expires) {
     const cache = lscache.get(key);
     if (cache) {
@@ -9,10 +11,22 @@ class Cache {
     }
     console.debug(`Cache expired. key: ${key}`);
     return callback()
-      .then((data) => {
+    .then((data) => {
+      if (_.isNull(data)) {
+        console.error('Return value of callback === null');
+      } else if (_.isUndefined(data)) {
+        console.error('Return value of callback === undefined');
+      } else if (data === '') {
+        console.error("Return value of callback === ''");
+      } else {
         lscache.set(key, data, expires);
-        return data;
-      });
+      }
+      return data;
+    });
+  }
+
+  static remove(key) {
+    lscache.remove(key);
   }
 }
 

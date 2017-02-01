@@ -1,5 +1,6 @@
 import URI from 'urijs';
 import _ from 'underscore';
+import clone from 'clone';
 
 // ここに置いていいのか感
 export const parseSearchIndex = (text) => {
@@ -56,15 +57,34 @@ export const parseSearchIndex = (text) => {
     }
   });
 
-  return _.zip(countAndTimess, result).map((one) => {
-    return Object.assign(one[0], one[1]);
-  });
+  // return _.zip(countAndTimess, result).map((one) => {
+  //   return Object.assign(one[0], one[1]);
+  // });
+  // TODO 検証用
+  const entries = _.zip(countAndTimess, result)
+                   .map((one) => Object.assign(one[0], one[1]));
+  return entries.slice(0, 10);
 };
 
 export default function allEntries(state = [], action) {
   switch (action.type) {
     case 'RECEIVE_SEARCH_INDEX': {
+      // XXX 一応パースの時間測りたい。改善の余地あんま無さそうな気がするけど...
       return parseSearchIndex(action.searchIndex);
+    }
+    case 'TOGGLE_STICKY': {
+      // XXX fastest-clone というのもあるらしい
+      const entries = clone(state);
+
+      // XXX 計算量ひどいので割りと真剣になんとかしたい ...
+      // あと url の文字列比較より id 比較のほうが若干高速なのでは ...
+      const i = entries.findIndex((entry)  => entry.url === action.entry.url);
+      if (i < 0) {
+        console.error(`Entry was not found in state. entry.url = ${action.entry.url}`);
+      }
+      entries[i] = action.entry;
+
+      return entries;
     }
     default: {
       return state;

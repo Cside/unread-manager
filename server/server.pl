@@ -13,21 +13,24 @@ use Config::Pit;
 use JSON;
 use WebService::Hatena::Bookmark::Lite;
 use URI::Escape;
+use Devel::KYTProf; # TODO remove this later
 
 __PACKAGE__->load_plugins(qw/Web::JSON/);
 __PACKAGE__->load_plugins(qw/Web::Text/);
 
 BEGIN {
-    Sub::Install::install_sub({
-        into => 'Amon2::Web',
-        as   => 'render_error_json',
-        code => sub {
-            my ($self, $code, $data) = @_;
-            my $res = $self->render_json($data);
-            $res->status($code);
-            return $res;
-        },
-    });
+    for my $name (qw(render_error_json render_success_json)) {
+      Sub::Install::install_sub({
+          into => 'Amon2::Web',
+          as   => $name,
+          code => sub {
+              my ($self, $code, $data) = @_;
+              my $res = $self->render_json($data);
+              $res->status($code);
+              return $res;
+          },
+      });
+    }
 
     for my $pair (
         ['put',     'PUT'],
@@ -49,7 +52,10 @@ BEGIN {
         code => sub {
             my ($self, $rule) = @_;
             my $validator = Data::Validator->new(%$rule)->with('NoThrow');;
-            my $params = $self->req->parameters;
+
+            my $params = eval { decode_json $self->req->content };
+            return (undef, $self->render_error_json(400, { errors => ['Malformed JSON'] }))
+              if $@;
 
             $validator->validate(%$params);
 
@@ -85,19 +91,46 @@ put '/bookmark' => sub {
 
     my ($args, $error_res) = $c->validate({
         url     => 'Str',
-        tags    => 'ArrayRef[Str]',
-        comment => { isa => 'Str', optional => 1 },
+        tags    => { isa => 'ArrayRef[Str]|Undef', optional => 1 },
+        comment => { isa => 'Str|Undef',           optional => 1 },
     });
+    use Data::Dumper;
+    local $Data::Dumper::Indent = 1;
+    local $Data::Dumper::Terse  = 1;
+    use Data::Recursive::Encode;
+        warn Dumper(Data::Recursive::Encode->encode_utf8($args));
     return $error_res if $error_res;
 
-    # TODO
-    $CLIENT->edit(
-        edit_ep  => url_for_edit($args->{url}),
-        tag      => $args->{tags},
-        $args->{comment} ? (comment  => $args->{comment}) : (),
-    );
+    my $edit_ep = url_for_edit($args->{url});
 
-    return $c->render_json({ ok => JSON::true });
+    my $entry = eval { $CLIENT->getEntry(edit_ep => $edit_ep) };
+
+    if ($entry) {
+        warn Dumper(Data::Recursive::Encode->encode_utf8({
+            edit_ep => $edit_ep,
+            $args->{tags}    ? (tag      => $args->{tags})    : (),
+            $args->{comment} ? (comment  => $args->{comment}) : (),
+          }));
+        eval { $CLIENT->edit(
+            edit_ep => $edit_ep,
+            $args->{tags}    ? (tag      => $args->{tags})    : (),
+            $args->{comment} ? (comment  => $args->{comment}) : (),
+        ) };
+        return $c->render_error_json(500, { errors => [$@] }) if $@;
+        return $c->render_success_json(200, { ok => JSON::true });
+    }
+    warn Dumper(Data::Recursive::Encode->encode_utf8({
+        url => $args->{url},
+        $args->{tags}    ? (tag      => $args->{tags})    : (),
+        $args->{comment} ? (comment  => $args->{comment}) : (),
+      }));
+    eval { $CLIENT->add(
+        url => $args->{url},
+        $args->{tags}    ? (tag      => $args->{tags})    : (),
+        $args->{comment} ? (comment  => $args->{comment}) : (),
+    ) };
+    return $c->render_error_json(500, { errors => [$@] }) if $@;
+    return $c->render_success_json(201, { ok => JSON::true });
 };
 
 get '/bookmarks/search_index', sub  {
@@ -105,20 +138,17 @@ get '/bookmarks/search_index', sub  {
     return $c->render_text(LWP::Simple::get('http://b.hatena.ne.jp/Cside/search.data'));
 };
 
+# TODO 本来は /bookmarks/{uri} とすべき
 del '/bookmark' => sub {
     my ($c) = @_;
 
     my ($args, $error_res) = $c->validate({
-        urls => 'ArrayRef[Str]',
+        url => 'Str',
     });
     return $error_res if $error_res;
 
-    for my $url (@{$args->{urls}}) {
-        $CLIENT->delete(
-            edit_ep  => url_for_edit($url),
-        );
-    }
-
+    eval { $CLIENT->delete(edit_ep  => url_for_edit($args->{url})) };
+    return $c->render_success_json(404, { message => 'Not Found' }) if $@;
     return $c->render_json({ ok => JSON::true });
 };
 

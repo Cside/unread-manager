@@ -1,10 +1,9 @@
 /* global define, it, describe */
 import assert from 'power-assert';
+import allEntries, { parseSearchIndex } from '../../src/reducers/allEntries';
 
-const { parseSearchIndex } = require(`${process.cwd()}/src/reducers/allEntries`);
-
-describe('parseSearchIndex', () => {
-  it('parses text', () => {
+describe('RECEIVE_SEARCH_INDEX', () => {
+  it('parse search index', () => {
     const result = parseSearchIndex(`title1
 
 http://example.coom/1
@@ -67,5 +66,59 @@ http://example.coom/4
         forSearch: 'title4 tag1 tag2 comment http://example.coom/4',
       },
     ]);
+  });
+});
+
+describe('TOGGLE_STICKY', () => {
+  const action = { type: 'TOGGLE_STICKY' };
+  const state = [
+    { id: 1, url: 'http://1.com/', tags: [] },
+    { id: 2, url: 'http://2.com/', tags: [] },
+    { id: 3, url: 'http://3.com/', tags: [] },
+  ];
+
+  it('add tag', () => {
+    assert.deepEqual(
+      allEntries(
+        state,
+        {
+          ...action,
+          entry: { id: 2, url: 'http://2.com/', tags: ['foo'] },
+        },
+      ),
+      [
+        { id: 1, url: 'http://1.com/', tags: [] },
+        { id: 2, url: 'http://2.com/', tags: ['foo'] },
+        { id: 3, url: 'http://3.com/', tags: [] },
+      ],
+    );
+  });
+  it("hasn't changed state", () => {
+    assert.deepEqual(
+      state,
+      [
+        { id: 1, url: 'http://1.com/', tags: [] },
+        { id: 2, url: 'http://2.com/', tags: [] },
+        { id: 3, url: 'http://3.com/', tags: [] },
+      ],
+    );
+  });
+
+  it('remove tag', () => {
+    state[1] = { id: 2, url: 'http://2.com/', tags: ['foo'] };
+    assert.deepEqual(
+      allEntries(
+        state,
+        {
+          ...action,
+          entry: { id: 2, url: 'http://2.com/', tags: [] },
+        },
+      ),
+      [
+        { id: 1, url: 'http://1.com/', tags: [] },
+        { id: 2, url: 'http://2.com/', tags: [] },
+        { id: 3, url: 'http://3.com/', tags: [] },
+      ],
+    );
   });
 });
