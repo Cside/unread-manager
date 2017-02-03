@@ -39,10 +39,9 @@ export const toggleSticky = (state) => {
 export const search = (searchQuery) => {
   return (dispatch, getState) => {
     dispatch({
-      type:          'SEARCH',
-      allEntries:    getState().allEntries,
+      type:    'SEARCH',
+      entries: getState().entries,
       searchQuery,
-      searchQueries: searchQuery.split(/\s+/).filter(str => str !== ''),
     });
   };
 };

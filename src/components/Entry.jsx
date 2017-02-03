@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import visualwidth from 'visualwidth';
 
-const { arrayOf, shape, string, number, func } = React.PropTypes;
+const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
 
 class Entry extends Component {
   static propTypes = {
@@ -16,6 +16,7 @@ class Entry extends Component {
       count:     number.isRequired,
       date:      string.isRequired,
       forSearch: string.isRequired,
+      visible:   bool.isRequired,
     }).isRequired,
   }
 

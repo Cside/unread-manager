@@ -3,16 +3,15 @@ import SearchBox from '../components/SearchBox';
 import Tab       from '../components/Tab';
 import Entry     from '../components/Entry';
 
-const { arrayOf, shape, string, number, func } = React.PropTypes;
+const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
 
 export default class App extends Component {
-  // TODO 初期化時は visibleEntries とかないので isRequired いらないのでは
   static propTypes = {
     fetchSearchIndex: func.isRequired,
     search:           func.isRequired,
     toggleSticky:     func.isRequired,
     searchQuery:      string.isRequired,
-    visibleEntries:   arrayOf(
+    entries:          arrayOf(
       shape({
         id:        number.isRequired,
         title:     string.isRequired,
@@ -23,6 +22,7 @@ export default class App extends Component {
         count:     number.isRequired,
         date:      string.isRequired,
         forSearch: string.isRequired,
+        visible:   bool.isRequired,
       }).isRequired,
     ).isRequired,
   };
@@ -54,9 +54,13 @@ export default class App extends Component {
         }
         <table className="table">
           <tbody>
-            {this.props.visibleEntries.map(
-              entry => (<Entry key={entry.url} entry={entry} toggleSticky={toggleSticky} />),
-            )}
+            {
+              this.props.entries
+              .filter(entry => entry.visible)
+              .map(
+                entry => (<Entry key={entry.url} entry={entry} toggleSticky={toggleSticky} />),
+              )
+            }
           </tbody>
         </table>
       </div>

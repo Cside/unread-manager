@@ -4,9 +4,8 @@ import App from '../components/App';
 
 const mapStateToProps = state => {
   return {
-    // visibleEntries: state.visibleEntries,
-    visibleEntries: state.allEntries,
-    searchQuery:    state.searchQuery,
+    entries:     state.entries,
+    searchQuery: state.searchQuery,
   };
 };
 
