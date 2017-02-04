@@ -40,17 +40,17 @@ class Entry extends Component {
             <img className="sticky-img" src={`/img/sticky_${entry.readThisLater ? 'on' : 'off'}.png`} />
           </a>
         </td>
-        <td className="favicon">
+        <td width="80">
+          <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
+        </td>
+        <td width="35">
           <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
         </td>
-        <td>
+        <td width="600">
           <a href={entry.url} target="_blank" rel="noopener noreferrer">
             {visualwidth.truncate(entry.title, 80, '...')}
           </a>
           {comment}
-        </td>
-        <td>
-          {`${entry.count} users`}
         </td>
         <td>
           {entry.date}

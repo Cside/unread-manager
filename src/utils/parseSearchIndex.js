@@ -61,6 +61,6 @@ export default function parseSearchIndex(text) {
 
   entries = _.zip(entries, additionals)
              .map((one) => Object.assign(one[0], one[1]));
-  return entries.slice(0, 10);
-  // return entries;
+  // return entries.slice(0, 10);
+  return entries;
 }
