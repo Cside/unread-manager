@@ -1,59 +1,61 @@
-import clone     from 'clone';
-import Cache     from '../utils/Cache';
-import ApiClient from '../utils/ApiClient';
+import clone from 'clone';
+import Cache from            '../utils/Cache';
+import ApiClient from        '../utils/ApiClient';
+import parseSearchIndex from '../utils/parseSearchIndex';
+import elapsedTime from      '../utils/elapsedTime';
 
 // TODO HTTP Request 中の Loading アイコン的なもの
 // TODO HTTP Request の Error Handling
 
 export const onClickSticky = (state) => {
   const entry = clone(state);
-  return (dispatch) => {
-    const tags = entry.tags;
-    entry.tags = entry.readThisLater
-           ? tags.filter((tag) => tag !== 'あとで読む')
-           : (() => { tags.unshift('あとで読む'); return tags; })();
+  const tags  = entry.tags;
 
-    // XXX こういうのとか別関数に切り出すべきでは...
-    dispatch({
-      type: 'TOGGLE_STICKY',
-      entry,
-    });
+  if (entry.readThisLater) {
+    entry.tags = tags.filter((tag) => tag !== 'あとで読む');
+  } else {
+    tags.unshift('あとで読む');
+    entry.tags = tags;
+  }
 
-    Cache.remove('searchIndex');
+  Cache.remove('entries');
 
-    ApiClient.put('/bookmark', {
-      url:     entry.url,
-      tags:    entry.tags,
-      comment: entry.comment,
-    })
-    .catch(e => console.error(e));
+  ApiClient.put('/bookmark', {
+    url:     entry.url,
+    tags:    entry.tags,
+    comment: entry.comment,
+  })
+  .catch(e => console.error(e));
+
+  return {
+    type: 'TOGGLE_STICKY',
+    entry,
   };
 };
 
 export const search = (searchQuery) => {
-  return (dispatch, getState) => {
-    dispatch({
-      type:    'SEARCH',
-      entries: getState().entries,
-      searchQuery,
-    });
+  return {
+    type: 'SEARCH',
+    searchQuery,
   };
 };
 
 export const fetchSearchIndex = () => {
   return (dispatch) => {
-    Cache.getOrSetForPromise('searchIndex', () => {
+    Cache.getOrSetForPromise('entries', () => {
       return ApiClient.get('/bookmarks/search_index')
-        .then(res => res.data)
+        .then(res => {
+          const [elapsed, entries] = elapsedTime(() => parseSearchIndex(res.data));
+          console.debug(`[${elapsed} ms] parseSearchIndex(index(${res.data.split('\n').length}))`);
+          return entries;
+        })
         .catch(e => console.error(e));
     }, 60 * 6)
-    .then((searchIndex) => {
-      if (searchIndex) {
-        dispatch({
-          type: 'RECEIVE_SEARCH_INDEX',
-          searchIndex,
-        });
-      }
+    .then((entries) => {
+      dispatch({
+        type: 'RECEIVE_ENTRIES',
+        entries,
+      });
       dispatch(search('あとで読む'));
     });
   };

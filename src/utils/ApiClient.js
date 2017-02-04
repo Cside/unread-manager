@@ -16,7 +16,7 @@ ApiClient.interceptors.request.use(config => {
 
 ApiClient.interceptors.response.use(res => {
   console.debug(
-    `[${(new Date() - start).toLocaleString()}ms] ${res.status} ${res.config.method.toUpperCase()}  ${res.config.url}`,
+    `[${(new Date() - start).toLocaleString()} ms] ${res.status} ${res.config.method.toUpperCase()}  ${res.config.url}`,
   );
   return res;
 });

@@ -1,4 +1,5 @@
 --recursive
 --compilers js:babel-register
 --require test/utils/dom.js
+--require test/utils/console.js
 --timeout 3000
