@@ -68,7 +68,7 @@ export const parseSearchIndex = (text) => {
   // return entries;
 };
 
-export default function entries(state = [], action) {
+export default function entriesReducer(state = [], action) {
   switch (action.type) {
     case 'RECEIVE_SEARCH_INDEX': {
       // XXX 一応パースの時間測りたい。改善の余地あんま無さそうな気がするけど...

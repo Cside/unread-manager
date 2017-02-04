@@ -1,6 +1,6 @@
 /* global define, it, describe */
 import assert from 'power-assert';
-import entries, { parseSearchIndex } from '../../src/reducers/entries';
+import entriesReducer, { parseSearchIndex } from '../../src/reducers/entries';
 
 describe('RECEIVE_SEARCH_INDEX', () => {
   it('parse search index', () => {
@@ -84,7 +84,7 @@ describe('TOGGLE_STICKY', () => {
   // XXX 何このテスト？
   it('add tag', () => {
     assert.deepEqual(
-      entries(
+      entriesReducer(
         state,
         {
           ...action,
@@ -112,7 +112,7 @@ describe('TOGGLE_STICKY', () => {
   it('remove tag', () => {
     state[1] = { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true };
     assert.deepEqual(
-      entries(
+      entriesReducer(
         state,
         {
           ...action,

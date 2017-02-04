@@ -54,7 +54,7 @@ export const fetchSearchIndex = () => {
           searchIndex,
         });
       }
-      dispatch(search(''));
+      dispatch(search('あとで読む'));
     });
   };
 };

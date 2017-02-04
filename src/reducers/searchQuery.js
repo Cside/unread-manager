@@ -1,4 +1,4 @@
-export default function searchQuery(state = '', action) {
+export default function searchQueryReducer(state = '', action) {
   switch (action.type) {
     case 'SEARCH':
       return action.searchQuery;
