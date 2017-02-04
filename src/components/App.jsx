@@ -10,6 +10,7 @@ export default class App extends Component {
     fetchSearchIndex: func.isRequired,
     search:           func.isRequired,
     onClickSticky:    func.isRequired,
+    initialized:      bool.isRequired,
     searchQuery:      string.isRequired,
     entries:          arrayOf(
       shape({
@@ -33,36 +34,46 @@ export default class App extends Component {
   }
 
   render = () => {
-    const { searchQuery, search, onClickSticky } = this.props;
+    const { searchQuery, initialized, search, onClickSticky } = this.props;
+
+    const Content = initialized ? (
+      <table className="table">
+        <tbody>
+          {
+            this.props.entries
+            .filter(entry => entry.visible)
+            .map(
+              entry => (<Entry key={entry.url} entry={entry} onClickSticky={onClickSticky} />),
+            )
+          }
+        </tbody>
+      </table>
+    ) : (
+      <img src="/img/loading.gif" />
+    );
 
     return (
       <div>
-        <SearchBox search={search} searchQuery={searchQuery} />
-        {
-          [
-            { name: '全て',       searchQuery: '' },
-            { name: 'あとで読む', searchQuery: 'あとで読む' },
-          ].map((data) => {
-            return (
-              <Tab
-                key={data.name}
-                name={data.name}
-                onClick={() => { search(data.searchQuery); }}
-              />
-            );
-          })
-        }
-        <table className="table">
-          <tbody>
-            {
-              this.props.entries
-              .filter(entry => entry.visible)
-              .map(
-                entry => (<Entry key={entry.url} entry={entry} onClickSticky={onClickSticky} />),
-              )
-            }
-          </tbody>
-        </table>
+        <div>
+          <SearchBox search={search} searchQuery={searchQuery} />
+          {
+            [
+              { name: '全て',       searchQuery: '' },
+              { name: 'あとで読む', searchQuery: 'あとで読む' },
+            ].map((data) => {
+              return (
+                <Tab
+                  key={data.name}
+                  name={data.name}
+                  onClick={() => { search(data.searchQuery); }}
+                />
+              );
+            })
+          }
+        </div>
+        <div>
+          {Content}
+        </div>
       </div>
     );
   }

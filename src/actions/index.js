@@ -5,7 +5,6 @@ import parseSearchIndex from '../utils/parseSearchIndex';
 import elapsedTime from      '../utils/elapsedTime';
 
 // TODO HTTP Request 中の Loading アイコン的なもの
-// TODO HTTP Request の Error Handling
 
 export const onClickSticky = (state) => {
   const entry = clone(state);
@@ -25,7 +24,10 @@ export const onClickSticky = (state) => {
     tags:    entry.tags,
     comment: entry.comment,
   })
-  .catch(e => console.error(e));
+  .catch(e => {
+    console.error(e);
+    alert(`エラー:\n${e}`);
+  });
 
   return {
     type: 'TOGGLE_STICKY',
@@ -41,7 +43,7 @@ export const search = (searchQuery) => {
 };
 
 export const fetchSearchIndex = () => {
-  return (dispatch) => {
+  return dispatch => {
     Cache.getOrSetForPromise('entries', () => {
       return ApiClient.get('/bookmarks/search_index')
         .then(res => {
@@ -51,7 +53,7 @@ export const fetchSearchIndex = () => {
         })
         .catch(e => console.error(e));
     }, 60 * 6)
-    .then((entries) => {
+    .then(entries => {
       dispatch({
         type: 'RECEIVE_ENTRIES',
         entries,

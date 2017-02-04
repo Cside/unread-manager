@@ -6,6 +6,7 @@ const mapStateToProps = state => {
   return {
     entries:     state.entries,
     searchQuery: state.searchQuery,
+    initialized: state.initialized,
   };
 };
 
