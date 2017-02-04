@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { fetchSearchIndex, search, toggleSticky } from '../actions';
+import { fetchSearchIndex, search, onClickSticky } from '../actions';
 import App from '../components/App';
 
 const mapStateToProps = state => {
@@ -13,7 +13,7 @@ const mapDispatchToProps = dispatch => ({
   // XXX これ bindActionCreators に置き換えられるんとちゃうか
   fetchSearchIndex: ()            => dispatch(fetchSearchIndex()),
   search:           (searchQuery) => dispatch(search(searchQuery)),
-  toggleSticky:     (entry)       => dispatch(toggleSticky(entry)),
+  onClickSticky:    (entry)       => dispatch(onClickSticky(entry)),
 });
 
 export default connect(

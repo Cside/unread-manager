@@ -1,18 +1,11 @@
-import axios from 'axios';
-import clone from 'clone';
-import Cache from '../utils/Cache';
+import clone     from 'clone';
+import Cache     from '../utils/Cache';
+import ApiClient from '../utils/ApiClient';
 
 // TODO HTTP Request 中の Loading アイコン的なもの
 // TODO HTTP Request の Error Handling
 
-const httpClient = axios.create({
-  baseURL: 'http://localhost:7999',
-  headers: { 'Content-Type': 'application/json;charset=utf-8' },
-});
-
-// XXX stickey を toggle する以外にもいろいろやることあるので
-// onClickSticky みたいな抽象的な名前のほうがよさげ
-export const toggleSticky = (state) => {
+export const onClickSticky = (state) => {
   const entry = clone(state);
   return (dispatch) => {
     const tags = entry.tags;
@@ -20,6 +13,7 @@ export const toggleSticky = (state) => {
            ? tags.filter((tag) => tag !== 'あとで読む')
            : (() => { tags.unshift('あとで読む'); return tags; })();
 
+    // XXX こういうのとか別関数に切り出すべきでは...
     dispatch({
       type: 'TOGGLE_STICKY',
       entry,
@@ -27,7 +21,7 @@ export const toggleSticky = (state) => {
 
     Cache.remove('searchIndex');
 
-    httpClient.put('/bookmark', {
+    ApiClient.put('/bookmark', {
       url:     entry.url,
       tags:    entry.tags,
       comment: entry.comment,
@@ -49,7 +43,7 @@ export const search = (searchQuery) => {
 export const fetchSearchIndex = () => {
   return (dispatch) => {
     Cache.getOrSetForPromise('searchIndex', () => {
-      return httpClient.get('/bookmarks/search_index')
+      return ApiClient.get('/bookmarks/search_index')
         .then(res => res.data)
         .catch(e => console.error(e));
     }, 60 * 6)

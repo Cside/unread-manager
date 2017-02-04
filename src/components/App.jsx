@@ -9,7 +9,7 @@ export default class App extends Component {
   static propTypes = {
     fetchSearchIndex: func.isRequired,
     search:           func.isRequired,
-    toggleSticky:     func.isRequired,
+    onClickSticky:    func.isRequired,
     searchQuery:      string.isRequired,
     entries:          arrayOf(
       shape({
@@ -33,7 +33,7 @@ export default class App extends Component {
   }
 
   render = () => {
-    const { searchQuery, search, toggleSticky } = this.props;
+    const { searchQuery, search, onClickSticky } = this.props;
 
     return (
       <div>
@@ -58,7 +58,7 @@ export default class App extends Component {
               this.props.entries
               .filter(entry => entry.visible)
               .map(
-                entry => (<Entry key={entry.url} entry={entry} toggleSticky={toggleSticky} />),
+                entry => (<Entry key={entry.url} entry={entry} onClickSticky={onClickSticky} />),
               )
             }
           </tbody>

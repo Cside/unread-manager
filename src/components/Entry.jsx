@@ -5,7 +5,7 @@ const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
 
 class Entry extends Component {
   static propTypes = {
-    toggleSticky: func.isRequired,
+    onClickSticky: func.isRequired,
     entry: shape({
       id:        number.isRequired,
       title:     string.isRequired,
@@ -21,8 +21,8 @@ class Entry extends Component {
   }
 
   onClickSticky = () => {
-    const { entry, toggleSticky } = this.props;
-    toggleSticky(entry);
+    const { entry, onClickSticky } = this.props;
+    onClickSticky(entry);
   }
 
   // TODO state を更新してるつもりだが呼ばれない ... 何故？
