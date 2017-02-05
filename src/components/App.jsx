@@ -62,15 +62,13 @@ export default class App extends Component {
             [
               { name: '全て',       searchQuery: '' },
               { name: 'あとで読む', searchQuery: 'あとで読む' },
-            ].map((data) => {
-              return (
-                <Tab
-                  key={data.name}
-                  name={data.name}
-                  onClick={() => { actions.filterEntries(data.searchQuery); }}
-                />
-              );
-            })
+            ].map(data => (
+              <Tab
+                key={data.name}
+                name={data.name}
+                onClick={() => { actions.filterEntries(data.searchQuery); }}
+              />
+            ))
           }
         </div>
         <div>
