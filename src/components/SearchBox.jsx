@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-// import _ from 'underscore';
-
-const { string, func } = React.PropTypes;
+import T from '../propTypes';
 
 class SearchBox extends Component {
   static propTypes = {
-    filterEntries: func.isRequired,
-    searchQuery:   string.isRequired,
+    actions: T.shape({
+      filterEntries: T.func.isRequired,
+    }),
+    searchQuery: T.string.isRequired,
   }
 
   // _.debounce するとなぜか wait = 0 でもテキストエリアの値がおかしくなるので諦めた
-  onChange = (value) => this.props.filterEntries({ searchQuery: value })
+  onChange = (value) => this.props.actions.filterEntries({ searchQuery: value })
 
   render = () => {
     const { searchQuery } = this.props;

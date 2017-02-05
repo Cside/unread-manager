@@ -17,7 +17,6 @@ module.exports = {
   },
   plugins: [
     new AsyncAwaitPlugin({}),
-    new webpack.HotModuleReplacementPlugin(),
   ],
   module: {
     loaders: [

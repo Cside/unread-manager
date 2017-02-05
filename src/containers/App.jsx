@@ -7,6 +7,7 @@ const mapStateToProps = state => ({
   entries:     state.entries,
   searchQuery: state.searchQuery,
   initialized: state.initialized,
+  pagenation:  state.pagenation,
 });
 
 const mapDispatchToProps = dispatch => ({

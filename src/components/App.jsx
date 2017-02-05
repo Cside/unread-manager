@@ -1,33 +1,21 @@
 import React, { Component } from 'react';
-import SearchBox from '../components/SearchBox';
-import Tab       from '../components/Tab';
-import Entry     from '../components/Entry';
-
-const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
+import SearchBox      from '../components/SearchBox';
+import Tab            from '../components/Tab';
+import SearchResult   from '../components/SearchResult';
+import T              from '../propTypes';
 
 export default class App extends Component {
   static propTypes = {
-    actions: shape({
-      fetchSearchIndex: func.isRequired,
-      filterEntries:    func.isRequired,
-      onClickSticky:    func.isRequired,
+    initialized: T.bool.isRequired,
+    searchQuery: T.string.isRequired,
+    pagenation:  T.pagenation,
+    // これも外部ファイル化できるのでは ...
+    actions: T.shape({
+      fetchSearchIndex: T.func.isRequired,
+      filterEntries:    T.func.isRequired,
+      onClickSticky:    T.func.isRequired,
     }).isRequired,
-    initialized:      bool.isRequired,
-    searchQuery:      string.isRequired,
-    entries:          arrayOf(
-      shape({
-        id:        number.isRequired,
-        title:     string.isRequired,
-        tags:      arrayOf(string.isRequired).isRequired,
-        comment:   string,
-        url:       string.isRequired,
-        baseUrl:   string.isRequired,
-        count:     number.isRequired,
-        date:      string.isRequired,
-        forSearch: string.isRequired,
-        visible:   bool.isRequired,
-      }).isRequired,
-    ).isRequired,
+    entries: T.entries,
   };
 
   componentWillMount = () => {
@@ -36,20 +24,10 @@ export default class App extends Component {
   }
 
   render = () => {
-    const { searchQuery, initialized, actions } = this.props;
+    const { searchQuery, initialized, actions, entries, pagenation } = this.props;
 
     const Content = initialized ? (
-      <table className="table">
-        <tbody>
-          {
-            this.props.entries
-            .filter(entry => entry.visible)
-            .map(entry => (
-              <Entry key={entry.url} entry={entry} onClickSticky={actions.onClickSticky} />
-            ))
-          }
-        </tbody>
-      </table>
+      <SearchResult entries={entries} pagenation={pagenation} actions={actions} />
     ) : (
       <img src="/img/loading.gif" />
     );
@@ -66,7 +44,7 @@ export default class App extends Component {
               <Tab
                 key={data.name}
                 name={data.name}
-                onClick={() => { actions.filterEntries({ searchQuery: data.searchQuery }); }}
+                onClick={() => actions.filterEntries({ searchQuery: data.searchQuery })}
               />
             ))
           }

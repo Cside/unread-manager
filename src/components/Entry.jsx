@@ -1,37 +1,20 @@
 import React, { Component } from 'react';
 import visualwidth from 'visualwidth';
-
-const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
+import T from '../propTypes';
 
 class Entry extends Component {
   static propTypes = {
-    onClickSticky: func.isRequired,
-    entry: shape({
-      id:        number.isRequired,
-      title:     string.isRequired,
-      tags:      arrayOf(string.isRequired).isRequired,
-      comment:   string,
-      url:       string.isRequired,
-      baseUrl:   string.isRequired,
-      count:     number.isRequired,
-      date:      string.isRequired,
-      forSearch: string.isRequired,
-      visible:   bool.isRequired,
-    }).isRequired,
+    actions: T.shape({
+      onClickSticky: T.func.isRequired,
+    }),
+    entry: T.entries,
   }
 
-  onClickSticky = () => {
-    const { entry, onClickSticky } = this.props;
-    onClickSticky(entry);
-  }
-
-  // TODO state を更新してるつもりだが呼ばれない ... 何故？
   render = () => {
-    const { entry } = this.props;
+    const { entry, actions } = this.props;
 
     // XXX これ component を update するたびに計算するの盛大に無駄な気がする ...
     entry.readThisLater = entry.tags.some((tag) => tag === 'あとで読む');
-    const comment   = entry.comment ? (<div className="text-muted">{entry.comment}</div>) : null;
 
     //     <td width="80">
     //       <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
@@ -43,15 +26,18 @@ class Entry extends Component {
     return (
       <tr>
         <td>
-          <a href="javascript:void(0)" onClick={this.onClickSticky}>
-            <img className="sticky-img" src={`/img/sticky_${entry.readThisLater ? 'on' : 'off'}.png`} />
+          <a href="javascript:void(0)" onClick={() => actions.onClickSticky(entry)}>
+            <img
+              className="sticky-img"
+              src={`/img/sticky_${entry.readThisLater ? 'on' : 'off'}.png`}
+            />
           </a>
         </td>
         <td width="600">
           <a href={entry.url} target="_blank" rel="noopener noreferrer">
             {visualwidth.truncate(entry.title, 80, '...')}
           </a>
-          {comment}
+          {entry.comment ? (<div className="text-muted">{entry.comment}</div>) : null}
         </td>
         <td>
           {entry.date}

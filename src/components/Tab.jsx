@@ -1,11 +1,10 @@
 import React from 'react';
-
-const { string, func } = React.PropTypes;
+import T from '../propTypes';
 
 class Tabs extends React.Component {
   static propTypes = {
-    name: string.isRequired,
-    onClick: func.isRequired,
+    name:    T.string.isRequired,
+    onClick: T.func.isRequired,
   }
 
   render = () => {

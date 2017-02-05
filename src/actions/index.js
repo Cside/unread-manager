@@ -35,9 +35,10 @@ export const onClickSticky = (state) => {
   };
 };
 
-export const filterEntries = ({ searchQuery }) => ({
+export const filterEntries = ({ searchQuery, current }) => ({
   type: 'FILTER_ENTRIES',
   searchQuery,
+  current,
 });
 
 export const fetchSearchIndex = () => {
