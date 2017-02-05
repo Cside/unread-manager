@@ -4,7 +4,7 @@ const AsyncAwaitPlugin = require('webpack-async-await');
 module.exports = {
   entry: [
     'babel-polyfill',
-    'webpack-dev-server/client?http://localhost:3000', // WebSocket Runtime
+    'webpack-dev-server/client?http://localhost:2999', // WebSocket Runtime
     'webpack/hot/dev-server', // HMR dispatch Runtime
     './src/index.jsx',
   ],

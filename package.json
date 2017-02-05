@@ -6,8 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:js": "webpack --progress --colors",
     "watch:js": "webpack --progress --colors --watch",
-    "run:server": "webpack-dev-server --history-api-fallback --hot --content-base public --port 3000",
-    "start": "npm-run-all -p watch:js run:server",
+    "run:server": "webpack-dev-server --history-api-fallback --hot --content-base public --port 2999",
+    "run:api-server": "plackup -R server/ --port 7999 server/server.pl",
+    "start": "npm-run-all -p watch:js run:server run:api-server",
     "clean": "rm public/*hot-update.json public/*hot-update.js",
     "lint": "eslint src --fix"
   },

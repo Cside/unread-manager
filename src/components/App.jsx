@@ -8,7 +8,7 @@ const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
 export default class App extends Component {
   static propTypes = {
     fetchSearchIndex: func.isRequired,
-    search:           func.isRequired,
+    filterEntries:    func.isRequired,
     onClickSticky:    func.isRequired,
     initialized:      bool.isRequired,
     searchQuery:      string.isRequired,
@@ -34,7 +34,7 @@ export default class App extends Component {
   }
 
   render = () => {
-    const { searchQuery, initialized, search, onClickSticky } = this.props;
+    const { searchQuery, initialized, filterEntries, onClickSticky } = this.props;
 
     const Content = initialized ? (
       <table className="table">
@@ -55,7 +55,7 @@ export default class App extends Component {
     return (
       <div>
         <div>
-          <SearchBox search={search} searchQuery={searchQuery} />
+          <SearchBox filterEntries={filterEntries} searchQuery={searchQuery} />
           {
             [
               { name: '全て',       searchQuery: '' },
@@ -65,7 +65,7 @@ export default class App extends Component {
                 <Tab
                   key={data.name}
                   name={data.name}
-                  onClick={() => { search(data.searchQuery); }}
+                  onClick={() => { filterEntries(data.searchQuery); }}
                 />
               );
             })

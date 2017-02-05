@@ -5,13 +5,12 @@ const { string, func } = React.PropTypes;
 
 class SearchBox extends Component {
   static propTypes = {
-    search:      func.isRequired,
-    searchQuery: string.isRequired,
+    filterEntries: func.isRequired,
+    searchQuery:   string.isRequired,
   }
 
-  // wait = 0 でもなぜかテキストエリアの値がおかしくなる
-  // onChange = _.debounce((value) => this.props.search(value), 0);
-  onChange = (value) => this.props.search(value)
+  // _.debounce するとなぜか wait = 0 でもテキストエリアの値がおかしくなるので諦めた
+  onChange = (value) => this.props.filterEntries(value)
 
   render = () => {
     const { searchQuery } = this.props;

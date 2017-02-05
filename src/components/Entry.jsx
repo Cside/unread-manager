@@ -33,18 +33,19 @@ class Entry extends Component {
     entry.readThisLater = entry.tags.some((tag) => tag === 'あとで読む');
     const comment   = entry.comment ? (<div className="text-muted">{entry.comment}</div>) : null;
 
+    //     <td width="80">
+    //       <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
+    //     </td>
+    //     <td width="35">
+    //       <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
+    //     </td>
+
     return (
       <tr>
         <td>
           <a href="javascript:void(0)" onClick={this.onClickSticky}>
             <img className="sticky-img" src={`/img/sticky_${entry.readThisLater ? 'on' : 'off'}.png`} />
           </a>
-        </td>
-        <td width="80">
-          <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
-        </td>
-        <td width="35">
-          <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
         </td>
         <td width="600">
           <a href={entry.url} target="_blank" rel="noopener noreferrer">

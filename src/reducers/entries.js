@@ -27,7 +27,7 @@ export default function entriesReducer(state = [], action) {
 
       return entries;
     }
-    case 'SEARCH': {
+    case 'FILTER_ENTRIES': {
       const entries       = cloneEntries(state);
       const searchQueries = action.searchQuery.split(/\s+/)
                             .filter(str => str !== '')
