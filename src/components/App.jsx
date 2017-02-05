@@ -66,7 +66,7 @@ export default class App extends Component {
               <Tab
                 key={data.name}
                 name={data.name}
-                onClick={() => { actions.filterEntries(data.searchQuery); }}
+                onClick={() => { actions.filterEntries({ searchQuery: data.searchQuery }); }}
               />
             ))
           }

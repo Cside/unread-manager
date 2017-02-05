@@ -35,7 +35,7 @@ export const onClickSticky = (state) => {
   };
 };
 
-export const filterEntries = (searchQuery) => ({
+export const filterEntries = ({ searchQuery }) => ({
   type: 'FILTER_ENTRIES',
   searchQuery,
 });
@@ -56,7 +56,7 @@ export const fetchSearchIndex = () => {
         type: 'RECEIVE_ENTRIES',
         entries,
       });
-      dispatch(filterEntries('あとで読む'));
+      dispatch(filterEntries({ searchQuery: 'あとで読む' }));
     });
   };
 };
