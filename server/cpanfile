@@ -8,6 +8,6 @@ requires 'LWP::Simple';
 requires 'Plack::Builder';
 requires 'Sub::Install';
 requires 'URI::Escape';
-requires 'WebService::Hatena::Bookmark::Lite';
+requires 'git@github.com:Cside/p5-webservice-hatena-bookmark-lite.git';
 requires 'feature';
 requires 'perl', '5.10';
