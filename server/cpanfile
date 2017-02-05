@@ -1,0 +1,13 @@
+requires 'Amon2::Lite';
+requires 'Config::Pit';
+requires 'Data::Dumper::Concise';
+requires 'Data::Validator';
+requires 'Devel::KYTProf';
+requires 'JSON';
+requires 'LWP::Simple';
+requires 'Plack::Builder';
+requires 'Sub::Install';
+requires 'URI::Escape';
+requires 'WebService::Hatena::Bookmark::Lite';
+requires 'feature';
+requires 'perl', '5.10';

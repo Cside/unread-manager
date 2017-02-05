@@ -94,11 +94,6 @@ put '/bookmark' => sub {
         tags    => { isa => 'ArrayRef[Str]|Undef', optional => 1 },
         comment => { isa => 'Str|Undef',           optional => 1 },
     });
-    use Data::Dumper;
-    local $Data::Dumper::Indent = 1;
-    local $Data::Dumper::Terse  = 1;
-    use Data::Recursive::Encode;
-        warn Dumper(Data::Recursive::Encode->encode_utf8($args));
     return $error_res if $error_res;
 
     my $edit_ep = url_for_edit($args->{url});
@@ -106,11 +101,6 @@ put '/bookmark' => sub {
     my $entry = eval { $CLIENT->getEntry(edit_ep => $edit_ep) };
 
     if ($entry) {
-        warn Dumper(Data::Recursive::Encode->encode_utf8({
-            edit_ep => $edit_ep,
-            $args->{tags}    ? (tag      => $args->{tags})    : (),
-            $args->{comment} ? (comment  => $args->{comment}) : (),
-          }));
         eval { $CLIENT->edit(
             edit_ep => $edit_ep,
             $args->{tags}    ? (tag      => $args->{tags})    : (),
@@ -119,11 +109,6 @@ put '/bookmark' => sub {
         return $c->render_error_json(500, { errors => [$@] }) if $@;
         return $c->render_success_json(200, { ok => JSON::true });
     }
-    warn Dumper(Data::Recursive::Encode->encode_utf8({
-        url => $args->{url},
-        $args->{tags}    ? (tag      => $args->{tags})    : (),
-        $args->{comment} ? (comment  => $args->{comment}) : (),
-      }));
     eval { $CLIENT->add(
         url => $args->{url},
         $args->{tags}    ? (tag      => $args->{tags})    : (),
