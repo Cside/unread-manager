@@ -7,9 +7,11 @@ const { arrayOf, shape, string, number, func, bool } = React.PropTypes;
 
 export default class App extends Component {
   static propTypes = {
-    fetchSearchIndex: func.isRequired,
-    filterEntries:    func.isRequired,
-    onClickSticky:    func.isRequired,
+    actions: shape({
+      fetchSearchIndex: func.isRequired,
+      filterEntries:    func.isRequired,
+      onClickSticky:    func.isRequired,
+    }).isRequired,
     initialized:      bool.isRequired,
     searchQuery:      string.isRequired,
     entries:          arrayOf(
@@ -29,12 +31,12 @@ export default class App extends Component {
   };
 
   componentWillMount = () => {
-    const { fetchSearchIndex } = this.props;
-    fetchSearchIndex();
+    const { actions } = this.props;
+    actions.fetchSearchIndex();
   }
 
   render = () => {
-    const { searchQuery, initialized, filterEntries, onClickSticky } = this.props;
+    const { searchQuery, initialized, actions } = this.props;
 
     const Content = initialized ? (
       <table className="table">
@@ -42,9 +44,9 @@ export default class App extends Component {
           {
             this.props.entries
             .filter(entry => entry.visible)
-            .map(
-              entry => (<Entry key={entry.url} entry={entry} onClickSticky={onClickSticky} />),
-            )
+            .map(entry => (
+              <Entry key={entry.url} entry={entry} onClickSticky={actions.onClickSticky} />
+            ))
           }
         </tbody>
       </table>
@@ -55,7 +57,7 @@ export default class App extends Component {
     return (
       <div>
         <div>
-          <SearchBox filterEntries={filterEntries} searchQuery={searchQuery} />
+          <SearchBox filterEntries={actions.filterEntries} searchQuery={searchQuery} />
           {
             [
               { name: '全て',       searchQuery: '' },
@@ -65,7 +67,7 @@ export default class App extends Component {
                 <Tab
                   key={data.name}
                   name={data.name}
-                  onClick={() => { filterEntries(data.searchQuery); }}
+                  onClick={() => { actions.filterEntries(data.searchQuery); }}
                 />
               );
             })
