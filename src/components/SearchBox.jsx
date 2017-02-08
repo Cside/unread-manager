@@ -3,9 +3,7 @@ import T from '../propTypes';
 
 class SearchBox extends Component {
   static propTypes = {
-    actions: T.shape({
-      filterEntries: T.func.isRequired,
-    }),
+    actions:     T.actions,
     searchQuery: T.string.isRequired,
   }
 

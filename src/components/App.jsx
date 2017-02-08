@@ -9,13 +9,8 @@ export default class App extends Component {
     initialized: T.bool.isRequired,
     searchQuery: T.string.isRequired,
     pagenation:  T.pagenation,
-    // これも外部ファイル化できるのでは ...
-    actions: T.shape({
-      fetchSearchIndex: T.func.isRequired,
-      filterEntries:    T.func.isRequired,
-      onClickSticky:    T.func.isRequired,
-    }).isRequired,
-    entries: T.entries,
+    actions:     T.actions,
+    entries:     T.entries,
   };
 
   componentWillMount = () => {
@@ -35,7 +30,7 @@ export default class App extends Component {
     return (
       <div>
         <div>
-          <SearchBox filterEntries={actions.filterEntries} searchQuery={searchQuery} />
+          <SearchBox actions={actions} searchQuery={searchQuery} />
           {
             [
               { name: '全て',       searchQuery: '' },

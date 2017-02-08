@@ -4,10 +4,8 @@ import T from '../propTypes';
 
 class Entry extends Component {
   static propTypes = {
-    actions: T.shape({
-      onClickSticky: T.func.isRequired,
-    }),
-    entry: T.entry,
+    actions: T.actions,
+    entry:   T.entry,
   }
 
   render = () => {

@@ -4,9 +4,7 @@ import T     from '../propTypes';
 
 class SearchResult extends Component {
   static propTypes = {
-    actions: T.shape({
-      onClickSticky: T.func.isRequired,
-    }),
+    actions:    T.actions,
     entries:    T.entries,
     pagenation: T.pagenation,
   }
@@ -27,7 +25,9 @@ class SearchResult extends Component {
             }
           </tbody>
         </table>
-        {pagenation.hasNext ? (<p>もっと読む</p>) : null}
+        {
+          pagenation.hasNext ? (<p>もっと読む</p>) : null
+        }
       </div>
     );
   }

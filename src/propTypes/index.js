@@ -18,7 +18,13 @@ const propTypes = {
     current:  T.number.isRequired,
     hasNext:  T.bool.isRequired,
   }),
+  actions: T.shape({
+    fetchSearchIndex: T.func.isRequired,
+    filterEntries:    T.func.isRequired,
+    onClickSticky:    T.func.isRequired,
+  }).isRequired,
 };
+
 propTypes.entries = T.arrayOf(propTypes.entry);
 
 export default propTypes;
