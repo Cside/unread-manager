@@ -1,8 +1,8 @@
 import { PropTypes as T } from 'react';
 
-export default {
+const propTypes = {
   ...T,
-  entries: T.shape({
+  entry: T.shape({
     id:        T.number.isRequired,
     title:     T.string.isRequired,
     tags:      T.arrayOf(T.string.isRequired).isRequired,
@@ -15,7 +15,10 @@ export default {
     visible:   T.bool.isRequired,
   }).isRequired,
   pagenation: T.shape({
-    current:  T.string.isRequired,
-    hasNexxt: T.bool.isRequired,
+    current:  T.number.isRequired,
+    hasNext:  T.bool.isRequired,
   }),
 };
+propTypes.entries = T.arrayOf(propTypes.entry);
+
+export default propTypes;

@@ -7,7 +7,7 @@ class Entry extends Component {
     actions: T.shape({
       onClickSticky: T.func.isRequired,
     }),
-    entry: T.entries,
+    entry: T.entry,
   }
 
   render = () => {
