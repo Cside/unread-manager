@@ -23,7 +23,7 @@ describe('SEARCH', () => {
           { id: 2, forSearch: 'bar baz', visible: true },
           { id: 3, forSearch: 'baz foo', visible: true },
         ],
-        pagenation: { nextId : 4, hasNext: false },
+        pagenation: { nextId : null, hasNext: false },
       },
     );
   });
@@ -51,57 +51,41 @@ describe('SEARCH', () => {
     );
   });
 
-  // it('search by words', () => {
-  //   assert.deepEqual(
-  //     entriesReducer(
-  //       {
-  //         items: [
-  //           { id: 1, forSearch: 'foo bar', visible: true },
-  //           { id: 2, forSearch: 'bar baz', visible: true },
-  //           { id: 3, forSearch: 'baz foo', visible: true },
-  //           { id: 4, forSearch: 'baz foo', visible: true },
-  //           { id: 5, forSearch: 'baz foo', visible: true },
-  //         ],
-  //       },
-  //       { ...action, searchQuery: '', itemsPerPage: 2 },
-  //     ),
-  //     {
-  //       items: [
-  //         { id: 1, forSearch: 'foo bar', visible: true },
-  //         { id: 2, forSearch: 'bar baz', visible: true },
-  //         { id: 3, forSearch: 'baz foo', visible: true },
-  //         { id: 4, forSearch: 'baz foo', visible: true },
-  //         { id: 5, forSearch: 'baz foo', visible: true },
-  //         { id: 6, forSearch: 'baz foo', visible: true },
-  //       ],
-  //       pagenation: { nextId: 6, hasNext: true },
-  //     },
-  //   );
-  // });
-
-  // it('searcy by empty query', () => {
-  //   assert.deepEqual(
-  //     entriesReducer(
-  //       entries,
-  //       { ...action, searchQuery: '　' },
-  //     ),
-  //     {
-  //       items: [
-  //         { id: 1, forSearch: 'foo bar', visible: true },
-  //         { id: 2, forSearch: 'bar baz', visible: true },
-  //         { id: 3, forSearch: 'baz foo', visible: true },
-  //       ],
-  //       pagenation: { lastId: 3, hasNext: false },
-  //     },
-  //   );
-  // });
+  it('search by words', () => {
+    assert.deepEqual(
+      entriesReducer(
+        {
+          items: [
+            { id: 1, forSearch: 'foo', visible: true },
+            { id: 2, forSearch: '',    visible: true },
+            { id: 3, forSearch: 'foo', visible: true },
+            { id: 4, forSearch: '',    visible: true },
+            { id: 5, forSearch: 'foo', visible: true },
+            { id: 6, forSearch: '',    visible: true },
+          ],
+        },
+        { ...action, searchQuery: 'foo', itemsPerPage: 2 },
+      ),
+      {
+        items: [
+          { id: 1, forSearch: 'foo', visible: true  },
+          { id: 2, forSearch: '',    visible: false },
+          { id: 3, forSearch: 'foo', visible: true  },
+          { id: 4, forSearch: '',    visible: false },
+          { id: 5, forSearch: 'foo', visible: false },
+          { id: 6, forSearch: '',    visible: false },
+        ],
+        pagenation: { nextId: 5, hasNext: true },
+      },
+    );
+  });
 });
 
 // describe('RECEIVE_ENTRIES', () => {
 //   it('does not throw', () => {
 //     assert.deepEqual(
 //       entriesReducer(
-//         { items: [], pagenation: { lastId: 0, hasNext: false } },
+//         { items: [] },
 //         {
 //           type: 'RECEIVE_ENTRIES',
 //           entries: [
@@ -109,17 +93,18 @@ describe('SEARCH', () => {
 //             { id: 2, visible: false },
 //             { id: 3, visible: false },
 //           ],
+//           itemsPerPage: 2,
 //         },
 //       ),
 //       {
 //         items: [
-//           { id: 1, visible: false },
-//           { id: 2, visible: false },
+//           { id: 1, visible: true },
+//           { id: 2, visible: true },
 //           { id: 3, visible: false },
 //         ],
 //         pagenation: {
-//           lastId:  3,
-//           hasNext: false,
+//           nextId:  3,
+//           hasNext: true,
 //         },
 //       },
 //     );

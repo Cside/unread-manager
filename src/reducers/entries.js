@@ -29,18 +29,27 @@ export default function entriesReducer(state = defaultEntry, action) {
       const entries         = cloneEntries(state.items);
 
       const itemsPerPage = action.itemsPerPage || 10;
-      let   count        = 0;
-      let   nextId       = state.nextId || 1;
+      let   nextId       = state.nextId || null;
       let   hasNext      = false;
+      let   found        = 0;
+
+      const searchWords = action.searchQuery.split(/\s+/)
+                          .filter(str => str !== '')
+                          .map(str => str.toLowerCase());
+
+      let findMore = true;
 
       entries.forEach(entry => {
-        count++;
-        if (count <= itemsPerPage) {
-          nextId++;
-          entry.visible = true;
-        } else if (count === itemsPerPage + 1) {
-          hasNext = true;
-          entry.visible = false;
+        if (findMore && searchWords.every(word => entry.forSearch.indexOf(word) >= 0)) {
+          found++;
+          if (found <= itemsPerPage) {
+            entry.visible = true;
+          } else {
+            hasNext = true;
+            nextId = entry.id;
+            findMore = false;
+            entry.visible = false;
+          }
         } else {
           entry.visible = false;
         }
