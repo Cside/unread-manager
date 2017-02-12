@@ -3,7 +3,7 @@ import assert from 'power-assert';
 import entriesReducer, { applyPagenation } from '../../src/reducers/entries';
 
 describe('RECEIVE_ENTRIES', () => {
-  it("does not throw", () => {
+  it('does not throw', () => {
     assert.deepEqual(
       entriesReducer(
         { items: [], pagenation: { current: 1, hasNext: false } },
@@ -52,13 +52,18 @@ describe('TOGGLE_STICKY', () => {
         state,
         {
           ...action,
-          entry: { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true },
+          entry: {
+            id:      2,
+            url:     'http://2.com/',
+            tags:    ['foo'],
+            visible: true,
+          },
         },
       ),
       {
         items: [
           { id: 1, url: 'http://1.com/', tags: [],      visible: true },
-          { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true },
+          { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true, forSearch: ' foo  http://2.com/' },
           { id: 3, url: 'http://3.com/', tags: [],      visible: true },
         ],
         pagenation,

@@ -1,5 +1,6 @@
 import URI from 'urijs';
 import _ from 'underscore';
+import initializeEntry from './initializeEntry';
 
 export default function parseSearchIndex(text) {
   const lines = text.split('\n');
@@ -45,12 +46,6 @@ export default function parseSearchIndex(text) {
         const uri = new URI(line);
         additionals[index].baseUrl = `${uri.protocol()}://${uri.hostname()}/`;
         additionals[index].url = line;
-        additionals[index].forSearch = [
-          additionals[index].title,
-          additionals[index].tags.join(' '),
-          additionals[index].comment || '',
-          additionals[index].url,
-        ].join(' ').toLowerCase();
         break;
       }
       default: {
@@ -60,7 +55,8 @@ export default function parseSearchIndex(text) {
   });
 
   entries = _.zip(entries, additionals)
-             .map((one) => Object.assign(one[0], one[1]));
+             .map(one => Object.assign(one[0], one[1]))
+             .map(entry => initializeEntry(entry));
   // return entries.slice(0, 10);
   return entries;
 }

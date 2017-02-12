@@ -1,5 +1,6 @@
 import clone from 'clone';
-import elapsedTime from '../utils/elapsedTime';
+import elapsedTime     from '../utils/elapsedTime';
+import initializeEntry from '../utils/initializeEntry';
 
 const cloneEntries = (entries) => {
   const [elapsed, copied] = elapsedTime(() => clone(entries));
@@ -47,18 +48,15 @@ export default function entriesReducer(state = defaultEntry, action) {
     }
     // TODO current page 渡すように改修しないと駄目
     case 'TOGGLE_STICKY': {
-      // XXX fastest-clone というのもあるらしい
-      const entries = cloneEntries(state.items);
+      const entry = action.entry;
 
-      // XXX 計算量ひどいので割りと真剣になんとかしたい ...
-      // あと url の文字列比較より id 比較のほうが若干高速なのでは ...
-      const i = entries.findIndex((entry)  => entry.url === action.entry.url);
-      if (i < 0) {
-        console.error(`Entry was not found in state. entry.url = ${action.entry.url}`);
-      }
-      entries[i] = action.entry;
-
-      return applyPagenation(entries, state.pagenation.current);
+      return applyPagenation(
+        state.items.slice(0, entry.id - 1).concat(
+          [initializeEntry(entry)],
+          state.items.slice(entry.id),
+        ),
+        state.pagenation.current,
+      );
     }
     case 'SEARCH': {
       let entries         = cloneEntries(state.items);
@@ -84,6 +82,9 @@ export default function entriesReducer(state = defaultEntry, action) {
       );
 
       return applyPagenation(entries, 1);
+    }
+    case 'READ_MORE': {
+      return state;
     }
     default: {
       return state;
