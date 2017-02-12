@@ -6,8 +6,8 @@ import elapsedTime from      '../utils/elapsedTime';
 
 // TODO HTTP Request 中の Loading アイコン的なもの
 
-export const onClickSticky = (state) => {
-  const entry = clone(state);
+export const onClickSticky = (origEntry) => {
+  const entry = clone(origEntry);
   const tags  = entry.tags;
 
   if (entry.readThisLater) {
@@ -19,6 +19,7 @@ export const onClickSticky = (state) => {
 
   Cache.remove('entries');
 
+  // TODO loading 画像出すのがだるいので今はリクエスト投げっぱなしてる
   ApiClient.put('/bookmark', {
     url:     entry.url,
     tags:    entry.tags,
@@ -35,15 +36,26 @@ export const onClickSticky = (state) => {
   };
 };
 
-export const filterEntries = ({ searchQuery, current }) => ({
-  type: 'FILTER_ENTRIES',
+// TODO これは無い。既存の page 分の計算が無駄。
+// 既存の state に新しい page を append すべき。
+export const readMore = () => {
+  return (dispatch, getState) => {
+    const { searchQuery } = getState();
+    return {
+      type: 'READ_MORE',
+      searchQuery,
+    };
+  };
+};
+
+export const search = ({ searchQuery }) => ({
+  type: 'SEARCH',
   searchQuery,
-  current,
 });
 
 export const fetchSearchIndex = () => {
   return dispatch => {
-    Cache.getOrSetForPromise('entries', () => {
+    Cache.getOrSetAsync('entries', () => {
       return ApiClient.get('/bookmarks/search_index')
         .then(res => {
           const [elapsed, entries] = elapsedTime(() => parseSearchIndex(res.data));
@@ -57,7 +69,7 @@ export const fetchSearchIndex = () => {
         type: 'RECEIVE_ENTRIES',
         entries,
       });
-      dispatch(filterEntries({ searchQuery: 'あとで読む' }));
+      dispatch(search({ searchQuery: 'あとで読む' }));
     });
   };
 };

@@ -1,8 +1,13 @@
 {
-    "presets" : [
-        "es2015",
-        "stage-0",
-        "react",
-        "babel-preset-power-assert"
-    ]
+  "presets" : [
+      "es2015",
+      "stage-0",
+      "react",
+      "flow",
+      "babel-preset-power-assert"
+  ],
+  "plugins": [
+    "syntax-flow",
+    "babel-plugin-transform-flow-strip-types"
+  ]
 }

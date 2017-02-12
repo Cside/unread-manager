@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 class Cache {
   // expires = min
-  static getOrSetForPromise(key, callback, expires) {
+  static getOrSetAsync(key, callback, expires) {
     const cache = lscache.get(key);
     if (cache) {
       console.debug(`Cache exists. key: ${key}`);

@@ -6,18 +6,22 @@ class SearchResult extends Component {
   static propTypes = {
     actions:    T.actions,
     entries:    T.entries,
-    pagenation: T.pagenation,
+  }
+
+  onClickReadMore = () => {
+    const { actions, entries } = this.props;
+    actions.readMore();
   }
 
   render = () => {
-    const { actions, entries, pagenation } = this.props;
+    const { actions, entries } = this.props;
 
     return (
       <div>
         <table className="table">
           <tbody>
             {
-              entries
+              entries.items
               .filter(entry => entry.visible)
               .map(entry => (
                 <Entry key={entry.url} entry={entry} actions={actions} />
@@ -26,7 +30,9 @@ class SearchResult extends Component {
           </tbody>
         </table>
         {
-          pagenation.hasNext ? (<p>もっと読む</p>) : null
+          entries.pagenation.hasNext ? (
+            <button className="btn btn-default" onClick={this.onClickReadMore}>もっと読む</button>
+          ) : null
         }
       </div>
     );

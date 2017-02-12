@@ -7,15 +7,48 @@ const cloneEntries = (entries) => {
   return copied;
 };
 
-export default function entriesReducer(state = [], action) {
+// テストのためだけに export ...
+export function applyPagenation(entries, page, itemsPerPage = 10) {
+  const maxItems = page * itemsPerPage;
+  let hasNext = false;
+  let visibleItems = 0;
+
+  const items = entries.map(entry => {
+    let visible = false;
+    if (entry.visible) {
+      visibleItems++;
+
+      if (visibleItems <= maxItems) {
+        visible = true;
+      } else if (visibleItems === maxItems + 1) {
+        hasNext = true;
+      }
+    }
+    return { ...entry, visible };
+  });
+  return {
+    items,
+    pagenation: {
+      current: page,
+      hasNext,
+    },
+  };
+}
+
+// N ページ目を指定で探せるように
+// export function search() {
+// }
+
+const defaultEntry = { items: [], pagenation: { current: 1, hasNext: false } };
+export default function entriesReducer(state = defaultEntry, action) {
   switch (action.type) {
     case 'RECEIVE_ENTRIES': {
-      return action.entries;
+      return applyPagenation(action.entries, 1);
     }
-    // XXX テスト書きたい
+    // TODO current page 渡すように改修しないと駄目
     case 'TOGGLE_STICKY': {
       // XXX fastest-clone というのもあるらしい
-      const entries = cloneEntries(state);
+      const entries = cloneEntries(state.items);
 
       // XXX 計算量ひどいので割りと真剣になんとかしたい ...
       // あと url の文字列比較より id 比較のほうが若干高速なのでは ...
@@ -25,20 +58,23 @@ export default function entriesReducer(state = [], action) {
       }
       entries[i] = action.entry;
 
-      return entries;
+      return applyPagenation(entries, state.pagenation.current);
     }
-    case 'FILTER_ENTRIES': {
-      const entries       = cloneEntries(state);
+    case 'SEARCH': {
+      let entries         = cloneEntries(state.items);
       const searchQueries = action.searchQuery.split(/\s+/)
                             .filter(str => str !== '')
                             .map(str => str.toLowerCase());
       if (searchQueries.length === 0) {
-        return entries.map(entry => {
-          entry.visible = true;
-          return entry;
-        });
+        return applyPagenation(
+          entries.map(entry => {
+            entry.visible = true;
+            return entry;
+          }),
+          1, // TODO これいらないのでは ...
+        );
       }
-      return entries.map(
+      entries = entries.map(
         entry => {
           entry.visible = searchQueries.every(
             searchQuery => entry.forSearch.indexOf(searchQuery.toLowerCase()) >= 0,
@@ -46,6 +82,8 @@ export default function entriesReducer(state = [], action) {
           return entry;
         },
       );
+
+      return applyPagenation(entries, 1);
     }
     default: {
       return state;
