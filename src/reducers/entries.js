@@ -9,7 +9,7 @@ const cloneEntries = (entries) => {
 };
 
 // テストのためだけに export ...
-export function applyPagenation(entries, page, itemsPerPage = 10) {
+export function applyPagenation(entries, page = 1, itemsPerPage = 10) {
   const maxItems = page * itemsPerPage;
   let hasNext = false;
   let visibleItems = 0;
@@ -44,9 +44,8 @@ const defaultEntry = { items: [], pagenation: { current: 1, hasNext: false } };
 export default function entriesReducer(state = defaultEntry, action) {
   switch (action.type) {
     case 'RECEIVE_ENTRIES': {
-      return applyPagenation(action.entries, 1);
+      return applyPagenation(action.entries);
     }
-    // TODO current page 渡すように改修しないと駄目
     case 'TOGGLE_STICKY': {
       const entry = action.entry;
 
@@ -69,7 +68,6 @@ export default function entriesReducer(state = defaultEntry, action) {
             entry.visible = true;
             return entry;
           }),
-          1, // TODO これいらないのでは ...
         );
       }
       entries = entries.map(
@@ -81,7 +79,7 @@ export default function entriesReducer(state = defaultEntry, action) {
         },
       );
 
-      return applyPagenation(entries, 1);
+      return applyPagenation(entries);
     }
     case 'READ_MORE': {
       return state;
