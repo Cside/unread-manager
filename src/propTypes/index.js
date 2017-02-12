@@ -25,7 +25,7 @@ const propTypes = {
 propTypes.entries = T.shape({
   items:      T.arrayOf(propTypes.entry),
   pagenation: T.shape({
-    current:  T.number.isRequired,
+    lastId:   T.number.isRequired,
     hasNext:  T.bool.isRequired,
   }),
 });
