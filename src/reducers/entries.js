@@ -9,7 +9,7 @@ const cloneEntries = (entries) => {
   );
 };
 
-const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery = '' }) => {
+const search = ({ entries, itemsPerPage = 20, nextId = 1, searchQuery = '' }) => {
   let hasNext  = false;
   let findMore = true;
   let found    = 0;
