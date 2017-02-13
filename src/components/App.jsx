@@ -8,7 +8,6 @@ export default class App extends Component {
   static propTypes = {
     initialized: T.bool.isRequired,
     searchQuery: T.string.isRequired,
-    pagenation:  T.pagenation,
     actions:     T.actions,
     entries:     T.entries,
   };
@@ -19,10 +18,10 @@ export default class App extends Component {
   }
 
   render = () => {
-    const { searchQuery, initialized, actions, entries, pagenation } = this.props;
+    const { searchQuery, initialized, actions, entries } = this.props;
 
     const Content = initialized ? (
-      <SearchResult entries={entries} pagenation={pagenation} actions={actions} />
+      <SearchResult entries={entries} actions={actions} />
     ) : (
       <img src="/img/loading.gif" />
     );
@@ -39,7 +38,7 @@ export default class App extends Component {
               <Tab
                 key={data.name}
                 name={data.name}
-                onClick={() => actions.filterEntries({ searchQuery: data.searchQuery })}
+                onClick={() => actions.search({ searchQuery: data.searchQuery })}
               />
             ))
           }

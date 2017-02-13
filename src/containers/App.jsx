@@ -3,14 +3,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import App from '../components/App';
 
-const mapStateToProps = state => {
-  return {
-    entries:     state.entries,
-    searchQuery: state.searchQuery,
-    initialized: state.initialized,
-    pagenation:  state.pagenation,
-  };
-};
+const mapStateToProps = state => state;
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(Actions, dispatch),

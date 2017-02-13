@@ -1,51 +1,95 @@
 import clone from 'clone';
-import elapsedTime from '../utils/elapsedTime';
+import measureTime     from '../utils/measureTime';
+import initializeEntry from '../utils/initializeEntry';
 
 const cloneEntries = (entries) => {
-  const [elapsed, copied] = elapsedTime(() => clone(entries));
-  console.debug(`[${elapsed} ms] clone(entries(${entries.length}))`);
-  return copied;
+  return measureTime(
+    `clone(entries(${entries.length}))`,
+    () => clone(entries),
+  );
 };
 
-export default function entriesReducer(state = [], action) {
+const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery = '' }) => {
+  let hasNext  = false;
+  let findMore = true;
+  let found    = 0;
+
+  const searchWords = searchQuery.split(/\s+/)
+                      .filter(str => str !== '')
+                      .map(str => str.toLowerCase());
+  const hasSearchWords = searchWords.length > 0;
+
+  entries.forEach(entry => {
+    if (entry.id < nextId) return;
+
+    if (findMore &&
+        (!hasSearchWords || searchWords.every(word => entry.forSearch.indexOf(word) >= 0))) {
+      found++;
+      if (found <= itemsPerPage) {
+        entry.visible = true;
+      } else {
+        hasNext       = true;
+        nextId        = entry.id;
+        findMore      = false;
+        entry.visible = false;
+      }
+    } else {
+      entry.visible = false;
+    }
+  });
+
+  return {
+    items: entries,
+    pagenation: {
+      hasNext,
+      nextId: hasNext ? nextId : null,
+    },
+  };
+};
+
+const initialState = {
+  items:      [],
+  pagenation: {
+    lastId:  0,
+    hasNext: false,
+  },
+};
+export default function entriesReducer(state = initialState, action) {
   switch (action.type) {
     case 'RECEIVE_ENTRIES': {
-      return action.entries;
+      return search({
+        entries:      action.entries,
+        itemsPerPage: action.itemsPerPage,
+      });
     }
-    // XXX テスト書きたい
     case 'TOGGLE_STICKY': {
-      // XXX fastest-clone というのもあるらしい
-      const entries = cloneEntries(state);
+      const entry = action.entry;
 
-      // XXX 計算量ひどいので割りと真剣になんとかしたい ...
-      // あと url の文字列比較より id 比較のほうが若干高速なのでは ...
-      const i = entries.findIndex((entry)  => entry.url === action.entry.url);
-      if (i < 0) {
-        console.error(`Entry was not found in state. entry.url = ${action.entry.url}`);
-      }
-      entries[i] = action.entry;
-
-      return entries;
+      return {
+        items: state.items.slice(0, entry.id - 1).concat(
+          [initializeEntry(entry)],
+          state.items.slice(entry.id),
+        ),
+        pagenation: state.pagenation,
+      };
     }
-    case 'FILTER_ENTRIES': {
-      const entries       = cloneEntries(state);
-      const searchQueries = action.searchQuery.split(/\s+/)
-                            .filter(str => str !== '')
-                            .map(str => str.toLowerCase());
-      if (searchQueries.length === 0) {
-        return entries.map(entry => {
-          entry.visible = true;
-          return entry;
-        });
-      }
-      return entries.map(
-        entry => {
-          entry.visible = searchQueries.every(
-            searchQuery => entry.forSearch.indexOf(searchQuery.toLowerCase()) >= 0,
-          );
-          return entry;
-        },
-      );
+    case 'SEARCH': {
+      return search({
+        entries:      cloneEntries(state.items),
+        itemsPerPage: action.itemsPerPage,
+        searchQuery:  action.searchQuery,
+      });
+    }
+    case 'READ_MORE': {
+      if (!state.pagenation.hasNext) return state;
+      return search({
+        // TODO 本当は append するやつだけ clone できればいいのだが...
+        // いや、できるか。できるな。まあ最初はそれ考えずにとりあえず機能要件満たそう。
+        entries:      cloneEntries(state.items),
+        itemsPerPage: action.itemsPerPage,
+        searchQuery:  action.searchQuery,
+        nextId:       state.pagenation.nextId,
+      });
     }
     default: {
       return state;

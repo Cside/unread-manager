@@ -1,10 +1,4 @@
-import colors from 'colors/safe';
-
-[
-  ['debug', 'blue'],
-  ['info', 'blue'],
-  ['warn', 'yellow'],
-  ['error', 'red'],
-].forEach(([method, color]) => {
-  console[method] = (msg) => console.log(colors[color](msg));
-});
+console.debug = () => {};
+console.info  = () => {};
+console.warn  = console.log;
+console.error = console.log;

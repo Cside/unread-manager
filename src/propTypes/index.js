@@ -14,17 +14,20 @@ const propTypes = {
     forSearch: T.string.isRequired,
     visible:   T.bool.isRequired,
   }).isRequired,
-  pagenation: T.shape({
-    current:  T.number.isRequired,
-    hasNext:  T.bool.isRequired,
-  }),
   actions: T.shape({
     fetchSearchIndex: T.func.isRequired,
-    filterEntries:    T.func.isRequired,
+    search:    T.func.isRequired,
     onClickSticky:    T.func.isRequired,
+    readMore:         T.func.isRequired,
   }).isRequired,
 };
 
-propTypes.entries = T.arrayOf(propTypes.entry);
+propTypes.entries = T.shape({
+  items:      T.arrayOf(propTypes.entry),
+  pagenation: T.shape({
+    netId:    T.number,
+    hasNext:  T.bool.isRequired,
+  }),
+});
 
 export default propTypes;

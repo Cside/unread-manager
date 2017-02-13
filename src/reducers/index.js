@@ -5,7 +5,8 @@ export default combineReducers({
   entries:     entriesReducer,
   searchQuery: (state = '', action) => {
     switch (action.type) {
-      case 'FILTER_ENTRIES': {
+      // TODO これは変。searchQuery を set する専用の Action を作れ。
+      case 'SEARCH': {
         return action.searchQuery;
       }
       default: {
@@ -17,17 +18,6 @@ export default combineReducers({
     switch (action.type) {
       case 'RECEIVE_ENTRIES': {
         return true;
-      }
-      default: {
-        return state;
-      }
-    }
-  },
-  pagenation: (state = { current: 1, hasNext: false }, action) => {
-    switch (action.type) {
-      case 'FILTER_ENTRIES': {
-        const pagenation = { ...state, ...action.pagenation };
-        return pagenation;
       }
       default: {
         return state;

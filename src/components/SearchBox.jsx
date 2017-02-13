@@ -8,7 +8,7 @@ class SearchBox extends Component {
   }
 
   // _.debounce するとなぜか wait = 0 でもテキストエリアの値がおかしくなるので諦めた
-  onChange = (value) => this.props.actions.filterEntries({ searchQuery: value })
+  onChange = (value) => this.props.actions.search({ searchQuery: value })
 
   render = () => {
     const { searchQuery } = this.props;
