@@ -1,11 +1,12 @@
 import clone from 'clone';
-import elapsedTime     from '../utils/elapsedTime';
+import measureTime     from '../utils/measureTime';
 import initializeEntry from '../utils/initializeEntry';
 
 const cloneEntries = (entries) => {
-  const [elapsed, copied] = elapsedTime(() => clone(entries));
-  console.debug(`[${elapsed} ms] clone(entries(${entries.length}))`);
-  return copied;
+  return measureTime(
+    `clone(entries(${entries.length}))`,
+    () => clone(entries),
+  );
 };
 
 const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery = '' }) => {
@@ -44,8 +45,14 @@ const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery = '' }) =>
   };
 };
 
-const defaultEntry = { items: [], pagenation: { lastId: 0, hasNext: false } };
-export default function entriesReducer(state = defaultEntry, action) {
+const initialState = {
+  items:      [],
+  pagenation: {
+    lastId:  0,
+    hasNext: false,
+  },
+};
+export default function entriesReducer(state = initialState, action) {
   switch (action.type) {
     case 'RECEIVE_ENTRIES': {
       return search({
@@ -65,17 +72,21 @@ export default function entriesReducer(state = defaultEntry, action) {
       };
     }
     case 'SEARCH': {
-      const entries         = cloneEntries(state.items);
-
       return search({
-        entries,
+        entries:      cloneEntries(state.items),
         itemsPerPage: action.itemsPerPage,
         searchQuery:  action.searchQuery,
       });
     }
-    // case 'READ_MORE': {
-    //   return state;
-    // }
+    case 'READ_MORE': {
+      return search({
+        // XXX 本当は append するやつだけ clone できればいいのだが...
+        entries:      cloneEntries(state.items),
+        itemsPerPage: action.itemsPerPage,
+        searchQuery:  action.searchQuery,
+        nextId:       state.pagenatio.nextId,
+      });
+    }
     default: {
       return state;
     }
