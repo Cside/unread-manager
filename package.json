@@ -15,7 +15,6 @@
   "author": "Cside",
   "license": "MIT",
   "dependencies": {
-    "ajv": "^4.11.2",
     "axios": "^0.15.3",
     "clone": "^2.1.0",
     "lscache": "^1.0.7",
@@ -38,10 +37,8 @@
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-syntax-async-functions": "^6.13.0",
-    "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.20.2",
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-polyfill": "^6.9.1",
