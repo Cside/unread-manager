@@ -10,18 +10,18 @@ describe('SEARCH', () => {
       entriesReducer(
         {
           items: [
-            { id: 1, forSearch: 'foo bar', visible: false },
-            { id: 2, forSearch: 'bar baz', visible: false },
-            { id: 3, forSearch: 'baz foo', visible: false },
+            { id: 1, forSearch: '', visible: false },
+            { id: 2, forSearch: '', visible: false },
+            { id: 3, forSearch: '', visible: false },
           ],
         },
         { ...action, searchQuery: '' },
       ),
       {
         items: [
-          { id: 1, forSearch: 'foo bar', visible: true },
-          { id: 2, forSearch: 'bar baz', visible: true },
-          { id: 3, forSearch: 'baz foo', visible: true },
+          { id: 1, forSearch: '', visible: true },
+          { id: 2, forSearch: '', visible: true },
+          { id: 3, forSearch: '', visible: true },
         ],
         pagenation: { nextId : null, hasNext: false },
       },
@@ -33,18 +33,18 @@ describe('SEARCH', () => {
       entriesReducer(
         {
           items: [
-            { id: 1, forSearch: 'foo bar', visible: true },
-            { id: 2, forSearch: 'bar baz', visible: true },
-            { id: 3, forSearch: 'baz foo', visible: true },
+            { id: 1, forSearch: '', visible: true },
+            { id: 2, forSearch: '', visible: true },
+            { id: 3, forSearch: '', visible: true },
           ],
         },
         { ...action, searchQuery: '', itemsPerPage: 2 },
       ),
       {
         items: [
-          { id: 1, forSearch: 'foo bar', visible: true },
-          { id: 2, forSearch: 'bar baz', visible: true },
-          { id: 3, forSearch: 'baz foo', visible: false },
+          { id: 1, forSearch: '', visible: true },
+          { id: 2, forSearch: '', visible: true },
+          { id: 3, forSearch: '', visible: false },
         ],
         pagenation: { nextId: 3, hasNext: true },
       },
@@ -165,63 +165,71 @@ describe('TOGGLE_STICKY', () => {
     );
   });
 });
-// 
-// describe('applyPagenation', () => {
-//   const itemsPerPage = 2;
-// 
-//   it("doesn't have next page", () => {
-//     const page = 1;
-//     assert.deepEqual(
-//       applyPagenation(
-//         [
-//           { id: 1, visible: false },
-//           { id: 2, visible: false },
-//           { id: 3, visible: true },
-//           { id: 4, visible: true },
-//         ],
-//         page,
-//         itemsPerPage,
-//       ),
-//       {
-//         items: [
-//           { id: 1, visible: false },
-//           { id: 2, visible: false },
-//           { id: 3, visible: true },
-//           { id: 4, visible: true },
-//         ],
-//         pagenation: {
-//           current: page,
-//           hasNext: false,
-//         },
-//       },
-//     );
-//   });
-// 
-//   it('has next page', () => {
-//     const page = 1;
-//     assert.deepEqual(
-//       applyPagenation(
-//         [
-//           { id: 1, visible: true },
-//           { id: 2, visible: true },
-//           { id: 3, visible: true },
-//           { id: 4, visible: true },
-//         ],
-//         page,
-//         itemsPerPage,
-//       ),
-//       {
-//         items: [
-//           { id: 1, visible: true },
-//           { id: 2, visible: true },
-//           { id: 3, visible: false },
-//           { id: 4, visible: false },
-//         ],
-//         pagenation: {
-//           current: page,
-//           hasNext: true,
-//         },
-//       },
-//     );
-//   });
-// });
+
+describe('READ_MORE', () => {
+  it('hasNext = true', () => {
+    assert.deepEqual(
+      entriesReducer(
+        // state
+        {
+          items: [
+            { id: 1, visible: true },
+            { id: 2, visible: false },
+            { id: 3, visible: false },
+            { id: 4, visible: false },
+            { id: 5, visible: false },
+          ],
+          pagenation: { nextId: 3, hasNext: true },
+        },
+        {
+          type: 'READ_MORE',
+          itemsPerPage: 2,
+        },
+      ),
+      {
+        items: [
+          { id: 1, visible: true },
+          { id: 2, visible: false },
+          { id: 3, visible: true },
+          { id: 4, visible: true },
+          { id: 5, visible: false },
+        ],
+        pagenation: {
+          nextId:  5,
+          hasNext: true,
+        },
+      },
+    );
+  });
+
+  it('hasNext = false', () => {
+    assert.deepEqual(
+      entriesReducer(
+        // state
+        {
+          items: [
+            { id: 1, visible: true },
+            { id: 2, visible: false },
+            { id: 3, visible: false },
+          ],
+          pagenation: { nextId: 3, hasNext: true },
+        },
+        {
+          type: 'READ_MORE',
+          itemsPerPage: 2,
+        },
+      ),
+      {
+        items: [
+          { id: 1, visible: true },
+          { id: 2, visible: false },
+          { id: 3, visible: true },
+        ],
+        pagenation: {
+          nextId:  null,
+          hasNext: false,
+        },
+      },
+    );
+  });
+});

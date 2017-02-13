@@ -20,6 +20,8 @@ const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery = '' }) =>
   const hasSearchWords = searchWords.length > 0;
 
   entries.forEach(entry => {
+    if (entry.id < nextId) return;
+
     if (findMore &&
         (!hasSearchWords || searchWords.every(word => entry.forSearch.indexOf(word) >= 0))) {
       found++;
@@ -79,12 +81,14 @@ export default function entriesReducer(state = initialState, action) {
       });
     }
     case 'READ_MORE': {
+      if (!state.pagenation.hasNext) return;
       return search({
         // XXX 本当は append するやつだけ clone できればいいのだが...
+        // いや、できるか。できるな。まあ最初はそれ考えずにとりあえず機能要件満たそう。
         entries:      cloneEntries(state.items),
         itemsPerPage: action.itemsPerPage,
         searchQuery:  action.searchQuery,
-        nextId:       state.pagenatio.nextId,
+        nextId:       state.pagenation.nextId,
       });
     }
     default: {
