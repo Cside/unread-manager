@@ -81,90 +81,90 @@ describe('SEARCH', () => {
   });
 });
 
-// describe('RECEIVE_ENTRIES', () => {
-//   it('does not throw', () => {
-//     assert.deepEqual(
-//       entriesReducer(
-//         { items: [] },
-//         {
-//           type: 'RECEIVE_ENTRIES',
-//           entries: [
-//             { id: 1, visible: false },
-//             { id: 2, visible: false },
-//             { id: 3, visible: false },
-//           ],
-//           itemsPerPage: 2,
-//         },
-//       ),
-//       {
-//         items: [
-//           { id: 1, visible: true },
-//           { id: 2, visible: true },
-//           { id: 3, visible: false },
-//         ],
-//         pagenation: {
-//           nextId:  3,
-//           hasNext: true,
-//         },
-//       },
-//     );
-//   });
-// });
-// 
-// describe('TOGGLE_STICKY', () => {
-//   const action = { type: 'TOGGLE_STICKY' };
-//   const pagenation = {
-//     current: 1,
-//     hasNext: false,
-//   };
-//   const state = {
-//     items: [
-//       { id: 1, url: 'http://1.com/', tags: [], visible: true },
-//       { id: 2, url: 'http://2.com/', tags: [], visible: true },
-//       { id: 3, url: 'http://3.com/', tags: [], visible: true },
-//     ],
-//     pagenation,
-//   };
-// 
-//   it('replace entry', () => {
-//     assert.deepEqual(
-//       entriesReducer(
-//         state,
-//         {
-//           ...action,
-//           entry: {
-//             id:      2,
-//             url:     'http://2.com/',
-//             tags:    ['foo'],
-//             visible: true,
-//           },
-//         },
-//       ),
-//       {
-//         items: [
-//           { id: 1, url: 'http://1.com/', tags: [],      visible: true },
-//           { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true, forSearch: ' foo  http://2.com/' },
-//           { id: 3, url: 'http://3.com/', tags: [],      visible: true },
-//         ],
-//         pagenation,
-//       },
-//     );
-//   });
-// 
-//   it("hasn't changed state", () => {
-//     assert.deepEqual(
-//       state,
-//       {
-//         items: [
-//           { id: 1, url: 'http://1.com/', tags: [], visible: true },
-//           { id: 2, url: 'http://2.com/', tags: [], visible: true },
-//           { id: 3, url: 'http://3.com/', tags: [], visible: true },
-//         ],
-//         pagenation,
-//       },
-//     );
-//   });
-// });
+describe('RECEIVE_ENTRIES', () => {
+  it('does not throw', () => {
+    assert.deepEqual(
+      entriesReducer(
+        { items: [] },
+        {
+          type: 'RECEIVE_ENTRIES',
+          entries: [
+            { id: 1, visible: false },
+            { id: 2, visible: false },
+            { id: 3, visible: false },
+          ],
+          itemsPerPage: 2,
+        },
+      ),
+      {
+        items: [
+          { id: 1, visible: true },
+          { id: 2, visible: true },
+          { id: 3, visible: false },
+        ],
+        pagenation: {
+          nextId:  3,
+          hasNext: true,
+        },
+      },
+    );
+  });
+});
+
+describe('TOGGLE_STICKY', () => {
+  const action = { type: 'TOGGLE_STICKY' };
+  const pagenation = {
+    current: 1,
+    hasNext: false,
+  };
+  const state = {
+    items: [
+      { id: 1, url: 'http://1.com/', tags: [], visible: true },
+      { id: 2, url: 'http://2.com/', tags: [], visible: true },
+      { id: 3, url: 'http://3.com/', tags: [], visible: true },
+    ],
+    pagenation,
+  };
+
+  it('replace entry', () => {
+    assert.deepEqual(
+      entriesReducer(
+        state,
+        {
+          ...action,
+          entry: {
+            id:      2,
+            url:     'http://2.com/',
+            tags:    ['foo'],
+            visible: true,
+          },
+        },
+      ),
+      {
+        items: [
+          { id: 1, url: 'http://1.com/', tags: [],      visible: true },
+          { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true, forSearch: ' foo  http://2.com/' },
+          { id: 3, url: 'http://3.com/', tags: [],      visible: true },
+        ],
+        pagenation,
+      },
+    );
+  });
+
+  it("hasn't changed state", () => {
+    assert.deepEqual(
+      state,
+      {
+        items: [
+          { id: 1, url: 'http://1.com/', tags: [], visible: true },
+          { id: 2, url: 'http://2.com/', tags: [], visible: true },
+          { id: 3, url: 'http://3.com/', tags: [], visible: true },
+        ],
+        pagenation,
+      },
+    );
+  });
+});
 // 
 // describe('applyPagenation', () => {
 //   const itemsPerPage = 2;
