@@ -81,9 +81,9 @@ export default function entriesReducer(state = initialState, action) {
       });
     }
     case 'READ_MORE': {
-      if (!state.pagenation.hasNext) return;
+      if (!state.pagenation.hasNext) return state;
       return search({
-        // XXX 本当は append するやつだけ clone できればいいのだが...
+        // TODO 本当は append するやつだけ clone できればいいのだが...
         // いや、できるか。できるな。まあ最初はそれ考えずにとりあえず機能要件満たそう。
         entries:      cloneEntries(state.items),
         itemsPerPage: action.itemsPerPage,

@@ -36,20 +36,18 @@ export const onClickSticky = (origEntry) => {
   };
 };
 
-// TODO これは無い。既存の page 分の計算が無駄。
-// 既存の state に新しい page を append すべき。
 export const readMore = () => {
   return (dispatch, getState) => {
     const { searchQuery } = getState();
-    return {
+    dispatch({
       type: 'READ_MORE',
       searchQuery,
-    };
+    });
   };
 };
 
 // TODO
-// searchQuery は state から取ってくれば良い
+// searchQuery は state から取ってくれば良いのでバケツリレーは無駄。
 // searchQuery を set する専用の action があれば良いのでは
 export const search = ({ searchQuery }) => ({
   type: 'SEARCH',

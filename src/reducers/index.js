@@ -5,6 +5,7 @@ export default combineReducers({
   entries:     entriesReducer,
   searchQuery: (state = '', action) => {
     switch (action.type) {
+      // TODO これは変。searchQuery を set する専用の Action を作れ。
       case 'SEARCH': {
         return action.searchQuery;
       }

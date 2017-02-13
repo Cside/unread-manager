@@ -9,7 +9,7 @@ class SearchResult extends Component {
   }
 
   onClickReadMore = () => {
-    const { actions, entries } = this.props;
+    const { actions } = this.props;
     actions.readMore();
   }
 
