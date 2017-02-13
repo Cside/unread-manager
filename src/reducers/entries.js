@@ -8,6 +8,40 @@ const cloneEntries = (entries) => {
   return copied;
 };
 
+const search = ({ entries, itemsPerPage = 10, nextId = 1, searchQuery }) => {
+  let hasNext  = false;
+  let findMore = true;
+  let found    = 0;
+
+  const searchWords = searchQuery.split(/\s+/)
+                      .filter(str => str !== '')
+                      .map(str => str.toLowerCase());
+
+  entries.forEach(entry => {
+    if (findMore && searchWords.every(word => entry.forSearch.indexOf(word) >= 0)) {
+      found++;
+      if (found <= itemsPerPage) {
+        entry.visible = true;
+      } else {
+        hasNext       = true;
+        nextId        = entry.id;
+        findMore      = false;
+        entry.visible = false;
+      }
+    } else {
+      entry.visible = false;
+    }
+  });
+
+  return {
+    items: entries,
+    pagenation: {
+      hasNext,
+      nextId: hasNext ? nextId : null,
+    },
+  };
+};
+
 const defaultEntry = { items: [], pagenation: { lastId: 0, hasNext: false } };
 export default function entriesReducer(state = defaultEntry, action) {
   switch (action.type) {
@@ -28,40 +62,11 @@ export default function entriesReducer(state = defaultEntry, action) {
     case 'SEARCH': {
       const entries         = cloneEntries(state.items);
 
-      const itemsPerPage = action.itemsPerPage || 10;
-      let   nextId       = state.nextId || null;
-      let   hasNext      = false;
-      let   found        = 0;
-
-      const searchWords = action.searchQuery.split(/\s+/)
-                          .filter(str => str !== '')
-                          .map(str => str.toLowerCase());
-
-      let findMore = true;
-
-      entries.forEach(entry => {
-        if (findMore && searchWords.every(word => entry.forSearch.indexOf(word) >= 0)) {
-          found++;
-          if (found <= itemsPerPage) {
-            entry.visible = true;
-          } else {
-            hasNext = true;
-            nextId = entry.id;
-            findMore = false;
-            entry.visible = false;
-          }
-        } else {
-          entry.visible = false;
-        }
+      return search({
+        entries,
+        itemsPerPage: action.itemsPerPage,
+        searchQuery:  action.searchQuery,
       });
-
-      return {
-        items: entries,
-        pagenation: {
-          nextId,
-          hasNext,
-        },
-      };
 
       // const searchQueries = action.searchQuery.split(/\s+/)
       //                       .filter(str => str !== '')
