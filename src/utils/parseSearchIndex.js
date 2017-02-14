@@ -55,8 +55,11 @@ export default function parseSearchIndex(text) {
   });
 
   entries = _.zip(entries, additionals)
-             .map(one => Object.assign(one[0], one[1]))
-             .map(entry => initializeEntry(entry));
+             .map(one => {
+               const entry = Object.assign(one[0], one[1]);
+               entry.togglingSticky = false;
+               return initializeEntry(entry);
+             });
   // return entries.slice(0, 10);
   return entries;
 }

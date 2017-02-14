@@ -18,7 +18,7 @@ class SearchResult extends Component {
 
     return (
       <div>
-        <table className="table">
+        <table className="table" width="800">
           <tbody>
             {
               entries.items

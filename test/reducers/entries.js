@@ -111,8 +111,8 @@ describe('RECEIVE_ENTRIES', () => {
   });
 });
 
-describe('TOGGLE_STICKY', () => {
-  const action = { type: 'TOGGLE_STICKY' };
+describe('FINISH_TOGGLE_STICKY', () => {
+  const action = { type: 'FINISH_TOGGLE_STICKY' };
   const pagenation = {
     current: 1,
     hasNext: false,
@@ -143,7 +143,7 @@ describe('TOGGLE_STICKY', () => {
       {
         items: [
           { id: 1, url: 'http://1.com/', tags: [],      visible: true },
-          { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true, forSearch: ' foo  http://2.com/' },
+          { id: 2, url: 'http://2.com/', tags: ['foo'], visible: true, togglingSticky: false, forSearch: ' foo  http://2.com/' },
           { id: 3, url: 'http://3.com/', tags: [],      visible: true },
         ],
         pagenation,
