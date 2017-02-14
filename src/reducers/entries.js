@@ -62,8 +62,21 @@ export default function entriesReducer(state = initialState, action) {
         itemsPerPage: action.itemsPerPage,
       });
     }
-    case 'TOGGLE_STICKY': {
+    case 'START_TOGGLE_STICKY': {
       const entry = action.entry;
+      entry.togglingSticky = true;
+
+      return {
+        items: state.items.slice(0, entry.id - 1).concat(
+          [entry],
+          state.items.slice(entry.id),
+        ),
+        pagenation: state.pagenation,
+      };
+    }
+    case 'FINISH_TOGGLE_STICKY': {
+      const entry = action.entry;
+      entry.togglingSticky = false;
 
       return {
         items: state.items.slice(0, entry.id - 1).concat(

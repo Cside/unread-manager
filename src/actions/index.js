@@ -4,35 +4,40 @@ import ApiClient from        '../utils/ApiClient';
 import parseSearchIndex from '../utils/parseSearchIndex';
 import measureTime      from '../utils/measureTime';
 
-// TODO HTTP Request 中の Loading アイコン的なもの
-
 export const onClickSticky = (origEntry) => {
-  const entry = clone(origEntry);
-  const tags  = entry.tags;
+  return dispatch => {
+    const entry = clone(origEntry);
 
-  if (entry.readThisLater) {
-    entry.tags = tags.filter((tag) => tag !== 'あとで読む');
-  } else {
-    tags.unshift('あとで読む');
-    entry.tags = tags;
-  }
+    dispatch({
+      type: 'START_TOGGLE_STICKY',
+      entry,
+    });
 
-  Cache.remove('entries');
+    const tags = entry.tags;
+    if (entry.readThisLater) {
+      entry.tags = tags.filter((tag) => tag !== 'あとで読む');
+    } else {
+      tags.unshift('あとで読む');
+      entry.tags = tags;
+    }
 
-  // TODO loading 画像出すのがだるいので今はリクエスト投げっぱなしてる
-  ApiClient.put('/bookmark', {
-    url:     entry.url,
-    tags:    entry.tags,
-    comment: entry.comment,
-  })
-  .catch(e => {
-    console.error(e);
-    alert(`エラー:\n${e}`);
-  });
-
-  return {
-    type: 'TOGGLE_STICKY',
-    entry,
+    // XXX キャッシュの中身を修正するほうが多分 UX 的にはベター
+    Cache.remove('entries');
+    return ApiClient.put('/bookmark', {
+      url:     entry.url,
+      tags:    entry.tags,
+      comment: entry.comment,
+    })
+    .then(() => {
+      return dispatch({
+        type: 'FINISH_TOGGLE_STICKY',
+        entry,
+      });
+    })
+    .catch(e => {
+      console.error(e);
+      alert(`エラー:\n${e}`);
+    });
   };
 };
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import visualwidth from 'visualwidth';
 import T from '../propTypes';
+import Sticky from './Sticky';
 
 class Entry extends Component {
   static propTypes = {
@@ -12,17 +13,12 @@ class Entry extends Component {
     const { entry, actions } = this.props;
 
     // XXX これ component を update するたびに計算するの盛大に無駄な気がする ...
-    entry.readThisLater = entry.tags.some((tag) => tag === 'あとで読む');
+    entry.readThisLater = entry.tags.some(tag => tag === 'あとで読む');
 
     return (
       <tr>
-        <td width="30">
-          <a href="javascript:void(0)" onClick={() => actions.onClickSticky(entry)}>
-            <img
-              className="sticky-img"
-              src={`/img/sticky_${entry.readThisLater ? 'on' : 'off'}.png`}
-            />
-          </a>
+        <td width="33">
+          <Sticky actions={actions} entry={entry} />
         </td>
         <td width="30">
           <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
