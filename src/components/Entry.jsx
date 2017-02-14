@@ -21,7 +21,7 @@ class Entry extends Component {
           <Sticky actions={actions} entry={entry} />
         </td>
         <td width="30">
-          <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.baseUrl)}`} />
+          <img src={`http://cdn-ak.favicon.st-hatena.com/?url=${encodeURIComponent(entry.url)}`} />
         </td>
         <td width="600">
           <a href={entry.url} target="_blank" rel="noopener noreferrer">

@@ -9,7 +9,6 @@ const propTypes = {
     tags:           T.arrayOf(T.string.isRequired).isRequired,
     comment:        T.string,
     url:            T.string.isRequired,
-    baseUrl:        T.string.isRequired,
     count:          T.number.isRequired,
     date:           T.string.isRequired,
     forSearch:      T.string.isRequired, // XXX 名前雑すぎでは ...

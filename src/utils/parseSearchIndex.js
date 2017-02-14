@@ -1,4 +1,3 @@
-import URI from 'urijs';
 import _ from 'underscore';
 import initializeEntry from './initializeEntry';
 
@@ -43,8 +42,6 @@ export default function parseSearchIndex(text) {
         break;
       }
       case 2: {
-        const uri = new URI(line);
-        additionals[index].baseUrl = `${uri.protocol()}://${uri.hostname()}/`;
         additionals[index].url = line;
         break;
       }
