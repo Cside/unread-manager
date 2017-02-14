@@ -32,13 +32,13 @@ class Entry extends Component {
           </a>
           {entry.comment ? (<div className="text-muted">{entry.comment}</div>) : null}
         </td>
-        <td width="70">
-          {entry.date}
-        </td>
         <td width="60">
           <a href={makeBookmarkEntry(entry.url)} target="_blank" rel="noopener noreferrer">
             <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
           </a>
+        </td>
+        <td width="70">
+          {entry.date}
         </td>
       </tr>
     );
