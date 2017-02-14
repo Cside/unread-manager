@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import visualwidth from 'visualwidth';
 import T from '../propTypes';
+import makeBookmarkEntry from '../utils/makeBookmarkEntryUrl';
 import Sticky from './Sticky';
 
 class Entry extends Component {
@@ -12,7 +13,9 @@ class Entry extends Component {
   render = () => {
     const { entry, actions } = this.props;
 
-    // XXX これ component を update するたびに計算するの盛大に無駄な気がする ...
+    // TODO
+    // 必要な計算は初期化時にまとめてやったほうが、インクリメンタルサーチの速度が向上する。
+    // truncate とか makeBookmarkEntry とかも同様。
     entry.readThisLater = entry.tags.some(tag => tag === 'あとで読む');
 
     return (
@@ -33,7 +36,9 @@ class Entry extends Component {
           {entry.date}
         </td>
         <td width="60">
-          <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
+          <a href={makeBookmarkEntry(entry.url)} target="_blank" rel="noopener noreferrer">
+            <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
+          </a>
         </td>
       </tr>
     );
