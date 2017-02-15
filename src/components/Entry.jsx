@@ -34,7 +34,7 @@ class Entry extends Component {
         </td>
         <td width="60">
           <a href={makeBookmarkEntry(entry.url)} target="_blank" rel="noopener noreferrer">
-            <img src={`http://b.st-hatena.com/entry/image/${entry.url}`} />
+            <img src={`http://b.st-hatena.com/entry/image/${entry.url.replace(/#/g, '%23')}`} />
           </a>
         </td>
         <td width="70">
