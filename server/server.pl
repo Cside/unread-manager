@@ -120,7 +120,7 @@ put '/bookmark' => sub {
 
 get '/bookmarks/search_index', sub  {
     my ($c) = @_;
-    return $c->render_text(LWP::Simple::get('http://b.hatena.ne.jp/Cside/search.data'));
+    return $c->render_text(LWP::Simple::get('http://b.hatena.ne.jp/Cside/search.data?' . time));
 };
 
 # TODO 本来は /bookmarks/{uri} とすべき
